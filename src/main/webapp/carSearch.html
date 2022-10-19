@@ -1,0 +1,59 @@
+<!--<%@ taglib uri= "http://java.sun.com/jsp/jstl/core" prefix="c" %>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> Search Car</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <h2>Filters </h2>
+            <div class="container">
+                <h3> Brands</h3>
+                <input type="checkbox" id="brand1" name="brand1" value="BMV">
+                <label for="brand1"> BMV </label><br>
+                <input type="checkbox" id="brand2" name="brand2" value="Audi">
+                <label for="brand2"> Audi </label><br>
+                <input type="checkbox" id="brand3" name="brand3" value="Chevrolet">
+                <label for="brand3"> Chevrolet </label><br>
+            </div>
+            <div class="container">
+                <h3>Quality class</h3>
+                <input type="checkbox" id="quality1" name="quality1" value="A">
+                <label for="quality1"> A-segment mini cars </label><br>
+                <input type="checkbox" id="quality2" name="quality2" value="B">
+                <label for="quality2"> B-segment small cars </label><br>
+                <input type="checkbox" id="quality3" name="quality3" value="S">
+                <label for="quality3"> C-segment medium cars </label><br>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="row" >
+                <div class="dropdown show">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Sort by
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#"> Price</a>
+                        <a class="dropdown-item" href="#"> Name</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                Car description
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
