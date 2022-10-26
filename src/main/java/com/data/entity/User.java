@@ -1,4 +1,4 @@
-package com.entity;
+package com.data.entity;
 
 import java.io.Serializable;
 
@@ -15,6 +15,7 @@ public class User implements Serializable {
     private String password;
     private int userRoleId;
     private boolean userStateActive;
+
 
     private User(String login, String email, String password, String passport) {
         this.id = 1;

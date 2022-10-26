@@ -1,14 +1,19 @@
-package com.db;
+package com.data.repository;
 
-import com.entity.CarModel;
+import com.data.DBException;
+import com.data.DataBaseConnection;
+import com.data.entity.CarModel;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CarModelDAOImpl implements CarModelDAO {
+public class CarModelRepository {
 
     private static final String CREATE_CAR_MODEL = "INSERT INTO car_model (brand, model, quality_class) VALUES (?, ?, ?)";
+
+    private static final String FIND_BRAND_LIST = "SELECT DISTINCT brand FROM car_model order by brand asc";
+    private static final String FIND_QUALITY_LIST = "SELECT DISTINCT quality_class FROM car_model order by quality_class asc";
 
     private static final String FIND_ALL_CAR_MODEL = "SELECT * FROM car_model";
     private static final String FIND_ALL_CAR_MODEL_BY_QUALITY_CLASS = FIND_ALL_CAR_MODEL + " WHERE quality_class = ?";
@@ -21,36 +26,45 @@ public class CarModelDAOImpl implements CarModelDAO {
 
     private static final String DELETE_CAR_MODEL = "DELETE FROM car_model WHERE id = ?";
 
+    public static void createCarModel(CarModel carModel) {
+        try ( Connection connection = DataBaseConnection.getInstance().getConnection();
+              PreparedStatement statement = connection.prepareStatement(CREATE_CAR_MODEL)
+        ) {
+            statement.setString(1, carModel.getBrand());
+            statement.setString(2, carModel.getModel());
+            statement.setString(3, carModel.getQualityClass());
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static List<CarModel> getAllCarModel() throws DBException {
         List<CarModel> carModelList = new ArrayList<>();
-        try (Connection con = DBConnection.getInstance().getConnection();
+        try (Connection con = DataBaseConnection.getInstance().getConnection();
              Statement stmt = con.createStatement();
-             ResultSet rs = stmt.executeQuery(FIND_ALL_CAR_MODEL)
+             ResultSet resultSet = stmt.executeQuery(FIND_ALL_CAR_MODEL)
         ) {
-            while (rs.next()) {
-                CarModel model = new CarModel(rs.getInt("id"), rs.getString("brand"),
-                        rs.getString("model"), rs.getString("quality_class"));
-//                model.setId(rs.getInt("id"));
+            while (resultSet.next()) {
+                CarModel model = extractCarModelFromResultSet(resultSet);
                 carModelList.add(model);
             }
 
         } catch (SQLException e) {
-            throw new DBException("FIND carModel FAIL", e);
+            throw new DBException("FIND All carModel FAIL", e);
         }
         return carModelList;
     }
 
     public static List<CarModel> getCarModelByQuality(String qualityClass) throws DBException {
         List<CarModel> carModelList = new ArrayList<>();
-        try (Connection con = DBConnection.getInstance().getConnection();
+        try (Connection con = DataBaseConnection.getInstance().getConnection();
              PreparedStatement statement = con.prepareStatement(FIND_ALL_CAR_MODEL_BY_QUALITY_CLASS)
         ) {
             statement.setString(1, qualityClass);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                CarModel model = new CarModel(rs.getString("brand"), rs.getString("model"),
-                        rs.getString("quality_class"));
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                CarModel model = extractCarModelFromResultSet(resultSet);
                 carModelList.add(model);
             }
         } catch (SQLException e) {
@@ -61,41 +75,35 @@ public class CarModelDAOImpl implements CarModelDAO {
 
     public static List<CarModel> getCarModelByBrand(String brand) throws DBException {
         List<CarModel> carModelList = new ArrayList<>();
-        try (Connection con = DBConnection.getInstance().getConnection();
+        try (Connection con = DataBaseConnection.getInstance().getConnection();
              PreparedStatement statement = con.prepareStatement(FIND_ALL_CAR_MODEL_BY_BRAND)
         ) {
             statement.setString(1, brand);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                CarModel model = new CarModel(rs.getString("brand"), rs.getString("model"),
-                        rs.getString("quality_class"));
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                CarModel model = extractCarModelFromResultSet(resultSet);
                 carModelList.add(model);
             }
 
         } catch (SQLException e) {
-
             throw new DBException("FIND carModel by brand FAIL", e);
-
         }
         return carModelList;
     }
 
     public static List<CarModel> getCarModelByQualityAndBrand(String qualityClass, String brand) throws DBException {
         List<CarModel> carModelList = new ArrayList<>();
-        try (Connection con = DBConnection.getInstance().getConnection();
+        try (Connection con = DataBaseConnection.getInstance().getConnection();
              PreparedStatement statement = con.prepareStatement(FIND_ALL_CAR_MODEL_QUALITY_CLASS_AND_BRAND)
         ) {
             statement.setString(1, qualityClass);
             statement.setString(2, brand);
-            ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                CarModel model = new CarModel(rs.getString("brand"), rs.getString("model"),
-                        rs.getString("quality_class"));
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                CarModel model = extractCarModelFromResultSet(resultSet);
                 carModelList.add(model);
             }
-
         } catch (SQLException e) {
-
             throw new DBException("FIND carModel by quality and brand FAIL", e);
 
         }
@@ -103,54 +111,25 @@ public class CarModelDAOImpl implements CarModelDAO {
     }
 
 
-    public static void createCarModel(CarModel carModel) {
-        Connection connection = DBConnection.getInstance().getConnection();
-        PreparedStatement statement = null;
-
-        try {
-            statement = connection.prepareStatement(CREATE_CAR_MODEL);
-
-
-            statement.setString(1, carModel.getBrand());
-            statement.setString(2, carModel.getModel());
-            statement.setString(3, carModel.getQualityClass());
-            statement.execute();
-
-//            logger.info("CarModelDaoImpl created car_model");
-        } catch (SQLException e) {
-            DBConnection.rollback(connection);
-//            logger.error("CarModelDaoImpl got error while creating the car_model");
-        } finally {
-            DBConnection.close(connection);
-//            logger.info("CarModelDaoImpl closed connection");
-        }
-    }
-
-
     public static CarModel getCarModelId(int id) {
 
-        Connection connection = DBConnection.getInstance().getConnection();
         CarModel carModel = null;
-        try (PreparedStatement statement = connection.prepareStatement(FIND_CAR_MODEL_BY_ID)) {
+        try (Connection connection = DataBaseConnection.getInstance().getConnection();
+                PreparedStatement statement = connection.prepareStatement(FIND_CAR_MODEL_BY_ID)) {
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 carModel = extractCarModelFromResultSet(resultSet);
-//                logger.info("CarModelDaoImpl read car_model");
             }
         } catch (SQLException e) {
-            DBConnection.rollback(connection);
-//            logger.error("CarModelDaoImpl got error while reading the car_model");
-        } finally {
-            DBConnection.close(connection);
-//            logger.info("CarModelDaoImpl closed connection");
+            e.printStackTrace();
         }
         return carModel;
     }
 
 
     public static CarModel updateCarModel(CarModel carModel) {
-        try (Connection con = DBConnection.getInstance().getConnection();
+        try (Connection con = DataBaseConnection.getInstance().getConnection();
              PreparedStatement statement = con.prepareStatement(UPDATE_CAR_MODEL)
         ) {
             statement.setString(1, carModel.getQualityClass());
@@ -166,14 +145,48 @@ public class CarModelDAOImpl implements CarModelDAO {
 
 
     public static void deleteCarModelById(int id) {
-        try (Connection con = DBConnection.getInstance().getConnection();
+        try (Connection con = DataBaseConnection.getInstance().getConnection();
              PreparedStatement stmt = con.prepareStatement(DELETE_CAR_MODEL)
         ) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
         }
+    }
+
+
+    public static List<String> getBrandList() throws DBException {
+        List<String> brandList = new ArrayList<>();
+        try (java.sql.Connection con = DataBaseConnection.getInstance().getConnection();
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(FIND_BRAND_LIST)
+        ) {
+            while (rs.next()) {
+                String newBrand = rs.getString("brand");
+                brandList.add(newBrand);
+            }
+
+        } catch (SQLException e) {
+            throw new DBException("FIND brand list FAIL", e);
+        }
+        return brandList;
+    }
+
+    public static List<String> getQualityList() throws DBException {
+        List<String> qualityList = new ArrayList<>();
+        try (java.sql.Connection con = DataBaseConnection.getInstance().getConnection();
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(FIND_QUALITY_LIST)
+        ) {
+            while (rs.next()) {
+                String newBrand = rs.getString("quality_class");
+                qualityList.add(newBrand);
+            }
+        } catch (SQLException e) {
+            throw new DBException("FIND quality list FAIL", e);
+        }
+        return qualityList;
     }
 
     private static CarModel extractCarModelFromResultSet(ResultSet resultSet) throws SQLException {

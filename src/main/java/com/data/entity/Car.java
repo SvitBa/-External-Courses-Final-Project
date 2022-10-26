@@ -1,4 +1,4 @@
-package com.entity;
+package com.data.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -15,11 +15,22 @@ public class Car implements Serializable {
 
     private boolean carCurrentAvailable;
 
-    public Car( BigDecimal rentPricePerDay, String modelId) {
+    public Car() {
+
+    }
+
+    public Car(BigDecimal rentPricePerDay, String modelId) {
         this.id = 1;
         this.rentPricePerDay = rentPricePerDay;
         this.modelId = modelId;
         this.carCurrentAvailable = true;
+    }
+
+    public Car(int carId, BigDecimal rentPricePerDay, CarModel model, boolean carCurrentAvailable) {
+        this.id = carId;
+        this.rentPricePerDay = rentPricePerDay;
+        this.carModel = model;
+        this.carCurrentAvailable = carCurrentAvailable;
     }
 
     public int getId() {
@@ -44,6 +55,18 @@ public class Car implements Serializable {
 
     public void setModelId(String model) {
         this.modelId = model;
+    }
+
+    public CarModel getCarModel() {
+        return carModel;
+    }
+
+    public void setCarModel(CarModel carModel) {
+        this.carModel = carModel;
+    }
+
+    public boolean isCarCurrentAvailable() {
+        return carCurrentAvailable;
     }
 
     public void setCarCurrentAvailable(boolean carCurrentAvailable) {

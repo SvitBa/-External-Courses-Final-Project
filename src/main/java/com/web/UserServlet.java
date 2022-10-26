@@ -1,8 +1,8 @@
-package com.servlet.example;
+package com.web;
 
-import com.db.DBException;
-import com.db.UserImpl;
-import com.entity.User;
+import com.data.DBException;
+import com.data.repository.UserRepository;
+import com.data.entity.User;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -100,7 +100,7 @@ public class UserServlet extends HttpServlet {
         User newUser = new User(Integer.parseInt(userId), login, email, passport, password);
 
         // step3: update db
-        UserImpl.updateUserProfile(newUser);
+        UserRepository.updateUserProfile(newUser);
 
         // step4: send back to the profile page
 //        listUser(request, response);
@@ -121,7 +121,7 @@ public class UserServlet extends HttpServlet {
                 Integer.parseInt(userRoleId), Boolean.parseBoolean(userStateActive));
 
         // step3: update db
-        UserImpl.updateUserByAdmin(newUser);
+        UserRepository.updateUserByAdmin(newUser);
 
         // step4: send back to the list page
         listUser(request, response);
@@ -132,7 +132,7 @@ public class UserServlet extends HttpServlet {
         String userId = request.getParameter("userId");
 
         // step2: delete user from db
-        UserImpl.deleteUserById(Integer.parseInt(userId));
+        UserRepository.deleteUserById(Integer.parseInt(userId));
 
         // step3: send back to the list page
         listUser(request, response);
@@ -146,7 +146,7 @@ public class UserServlet extends HttpServlet {
         // step2: get user from db
         User userById = null;
         try {
-            userById = UserImpl.getUserById(Integer.parseInt(userId));
+            userById = UserRepository.getUserById(Integer.parseInt(userId));
         } catch (DBException e) {
             throw new RuntimeException(e);
         }
@@ -171,7 +171,7 @@ public class UserServlet extends HttpServlet {
         User newUser = User.createUser(login, email, password, passport);
 
         // step3: add user to db
-        UserImpl.createUser(newUser);
+        UserRepository.createUser(newUser);
 
         // step4: send back to the list page
         listUser(request, response);
@@ -182,7 +182,7 @@ public class UserServlet extends HttpServlet {
         // step 1: get users from helper class from db
         List<User> userList = null;
         try {
-            userList = UserImpl.getAllUser();
+            userList = UserRepository.getAllUser();
         } catch (DBException e) {
             throw new RuntimeException(e);
         }

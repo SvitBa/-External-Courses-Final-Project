@@ -1,9 +1,8 @@
-package com.servlet.example;
+package com.web;
 
-import com.db.CarModelDAO;
-import com.db.CarModelDAOImpl;
-import com.db.DBException;
-import com.entity.CarModel;
+import com.data.repository.CarModelRepository;
+import com.data.DBException;
+import com.data.entity.CarModel;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -63,7 +62,7 @@ public class CarModelServlet extends HttpServlet {
         String carModelId = request.getParameter("carModelId");
 
         // step2:delete car model id from data
-        CarModelDAOImpl.deleteCarModelById(Integer.parseInt(carModelId));
+        CarModelRepository.deleteCarModelById(Integer.parseInt(carModelId));
 
         // step3: send back to the list page
         listModel(request, response);
@@ -80,7 +79,7 @@ public class CarModelServlet extends HttpServlet {
         CarModel newCarModel = new CarModel(Integer.parseInt(carModelId), brand, model, qualityClass);
 
         // step3: update db
-        CarModelDAOImpl.updateCarModel(newCarModel);
+        CarModelRepository.updateCarModel(newCarModel);
 
         // step4: send back to the list page
         listModel(request, response);
@@ -92,7 +91,7 @@ public class CarModelServlet extends HttpServlet {
         String carModelId = request.getParameter("carModelId");
 
         // step2: get car model from db
-        CarModel carModelById = CarModelDAOImpl.getCarModelId(Integer.parseInt(carModelId));
+        CarModel carModelById = CarModelRepository.getCarModelId(Integer.parseInt(carModelId));
 
         // step3: place car model in request attribute
         request.setAttribute("CAR_MODEL_ID", carModelById);
@@ -108,7 +107,7 @@ public class CarModelServlet extends HttpServlet {
         String carModelId = request.getParameter("carModelId");
 
         // step2: get car model from db
-        CarModel carModelById = CarModelDAOImpl.getCarModelId(Integer.parseInt(carModelId));
+        CarModel carModelById = CarModelRepository.getCarModelId(Integer.parseInt(carModelId));
 
         // step3: place car model in request attribute
         request.setAttribute("CAR_MODEL_ID", carModelById);
@@ -129,7 +128,7 @@ public class CarModelServlet extends HttpServlet {
         CarModel newCarModel = new CarModel(brand, model, qualityClass);
 
         // step3: add car model to db
-        CarModelDAOImpl.createCarModel(newCarModel);
+        CarModelRepository.createCarModel(newCarModel);
 
         // step4: send back to the list page
         listModel(request, response);
@@ -140,7 +139,7 @@ public class CarModelServlet extends HttpServlet {
         // step 1: get car model from helper class from db
         List<CarModel> carModelList = null;
         try {
-            carModelList = CarModelDAOImpl.getAllCarModel();
+            carModelList = CarModelRepository.getAllCarModel();
         } catch (DBException e) {
             throw new RuntimeException(e);
         }

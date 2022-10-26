@@ -1,18 +1,22 @@
-package com.db;
+package com.data.repository;
 
-import com.entity.User;
+import com.data.DataBaseConnection;
+import com.data.DBException;
+import com.data.entity.User;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserImpl {
+public class UserRepository {
 
     private static final String CREATE_USER = "INSERT INTO user (login, email, password, passport) VALUES (?, ?, ?, ?)";
 
     private static final String FIND_ALL_USER = "SELECT * FROM user";
 
     private static final String FIND_USER_BY_ID = FIND_ALL_USER + " WHERE id = ?";
+
+    private static final String FIND_USER_FOR_LOGIN = FIND_ALL_USER + " WHERE login = ? AND password = ?";
 
     private static final String FIND_ALL_USER_BY_ROLE = FIND_ALL_USER + " WHERE user_role_id = ?";
 
@@ -29,7 +33,7 @@ public class UserImpl {
     private static final String DELETE_USER = "DELETE FROM user WHERE id = ?";
 
     public static void createUser(User user) throws DBException {
-        try (Connection connection = DBConnection.getInstance().getConnection();
+        try (java.sql.Connection connection = DataBaseConnection.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(CREATE_USER);
              ){
 
@@ -47,7 +51,7 @@ public class UserImpl {
 
     public static List<User> getAllUser() throws DBException {
         List<User> userList = new ArrayList<>();
-        try (Connection con = DBConnection.getInstance().getConnection();
+        try (java.sql.Connection con = DataBaseConnection.getInstance().getConnection();
              Statement stmt = con.createStatement();
              ResultSet rs = stmt.executeQuery(FIND_ALL_USER)
         ) {
@@ -67,7 +71,7 @@ public class UserImpl {
     public static User getUserById(int userId) throws DBException {
 
         User user = null;
-        try (Connection con = DBConnection.getInstance().getConnection();
+        try (java.sql.Connection con = DataBaseConnection.getInstance().getConnection();
              PreparedStatement statement = con.prepareStatement(FIND_USER_BY_ID)
         ) {
             statement.setInt(1, userId);
@@ -85,9 +89,33 @@ public class UserImpl {
         return user;
     }
 
+    public static User getUserForLogin(String login, String password) throws DBException {
+
+        User user = null;
+        try (java.sql.Connection con = DataBaseConnection.getInstance().getConnection();
+             PreparedStatement statement = con.prepareStatement(FIND_USER_FOR_LOGIN)
+        ) {
+            statement.setString(1, login);
+            statement.setString(2, password);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                user = new User(rs.getInt("id"), rs.getString("login"),
+                        rs.getString("email"), rs.getString("password"),
+                        rs.getString("passport"));
+                user.setUserRoleId(rs.getInt("user_role_id"));
+                user.setUserStateActive(rs.getBoolean("user_state"));
+            } else {
+                user = new User (1, "1", "1", "1", "1");
+            }
+        } catch (SQLException e) {
+            throw new DBException("Get user for login FAIL", e);
+        }
+        return user;
+    }
+
     public static List<User> getUserByRole(int userRoleId) throws DBException {
         List<User> userList = new ArrayList<>();
-        try (Connection con = DBConnection.getInstance().getConnection();
+        try (java.sql.Connection con = DataBaseConnection.getInstance().getConnection();
              PreparedStatement statement = con.prepareStatement(FIND_ALL_USER_BY_ROLE)
         ) {
             statement.setInt(1, userRoleId);
@@ -109,7 +137,7 @@ public class UserImpl {
 
     public static List<User> getUserByState(boolean userState) throws DBException {
         List<User> userList = new ArrayList<>();
-        try (Connection con = DBConnection.getInstance().getConnection();
+        try (java.sql.Connection con = DataBaseConnection.getInstance().getConnection();
              PreparedStatement statement = con.prepareStatement(FIND_ALL_USER_BY_STATE)
         ) {
             statement.setBoolean(1, userState);
@@ -131,7 +159,7 @@ public class UserImpl {
 
 
     public static User updateUserProfile(User user) {
-        try (Connection con = DBConnection.getInstance().getConnection();
+        try (java.sql.Connection con = DataBaseConnection.getInstance().getConnection();
              PreparedStatement statement = con.prepareStatement(UPDATE_USER_PROFILE)
         ) {
             statement.setString(1, user.getLogin());
@@ -154,7 +182,7 @@ public class UserImpl {
     }
 
     public static User updateUserRole(User user) {
-        try (Connection con = DBConnection.getInstance().getConnection();
+        try (java.sql.Connection con = DataBaseConnection.getInstance().getConnection();
              PreparedStatement statement = con.prepareStatement(UPDATE_USER_ROLE)
         ) {
             statement.setInt(1, user.getUserRoleId());
@@ -167,7 +195,7 @@ public class UserImpl {
     }
 
     public static User updateUserState(User user) {
-        try (Connection con = DBConnection.getInstance().getConnection();
+        try (java.sql.Connection con = DataBaseConnection.getInstance().getConnection();
              PreparedStatement statement = con.prepareStatement(UPDATE_USER_STATE)
         ) {
             statement.setBoolean(1, user.isUserStateActive());
@@ -181,7 +209,7 @@ public class UserImpl {
 
 
     public static void deleteUserById(int id) {
-        try (Connection con = DBConnection.getInstance().getConnection();
+        try (java.sql.Connection con = DataBaseConnection.getInstance().getConnection();
              PreparedStatement stmt = con.prepareStatement(DELETE_USER)
         ) {
             stmt.setInt(1, id);
