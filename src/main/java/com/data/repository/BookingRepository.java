@@ -24,7 +24,7 @@ public class BookingRepository {
     private static final String UPDATE_BOOKING_DETAILS = "UPDATE booking SET pickup_date =?, " +
             "return_date = ?, driver = ? WHERE id = ?";
 
-    private static final String UPDATE_BOOKING_STATUS = "UPDATE booking SET booking_status_code = ?, cancel_comment = ? WHERE id = ?";
+    private static final String UPDATE_BOOKING_STATUS = "UPDATE booking SET booking_status_code_id = ? , cancel_comment = ? WHERE id = ?";
 
     private static final String DELETE_BOOKING = "DELETE FROM booking WHERE id = ?";
 

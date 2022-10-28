@@ -41,6 +41,7 @@ public class LoginServlet extends HttpServlet {
 
             // step3: place user in request attribute
             request.setAttribute("USER_ID", user.getId());
+            request.getSession().setAttribute("user", user);
 
             //step 4: send back to the search page
             RequestDispatcher dispatcher = request.getRequestDispatcher("CarServlet");

@@ -16,13 +16,14 @@
     <title> My booking </title>
 </head>
 <body>
-<hr>
 <br>
 <div id="container" class="col-sm-8">
 
 
     <div class="row">
         <h3> My Booking </h3>
+    </div>
+    <div class="row" >
         <table class="sortable" border="1">
             <tr align="center">
 

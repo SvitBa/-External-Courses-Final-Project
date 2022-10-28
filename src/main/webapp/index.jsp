@@ -9,6 +9,14 @@
 
 </head>
 <body>
+ <c:choose>
+        <c:when test="${user != null}">
+            <p> logged </p>
+        </c:when>
+        <c:otherwise>
+             <p>  not logged </p>
+        </c:otherwise>
+    </c:choose>
 <div class="container">
     <div class="row">
         <div class="col-sm-8">
@@ -32,9 +40,8 @@
                         <input type="password" placeholder="Enter Password" name="password" required>
                         <br>
                         <button type="submit" class="btn btn-sm btn-secondary">Login</button>
-                        <input type="checkbox" checked="checked"> Remember me
+
                         <br>
-                        Forgot <a href="#"> password? </a>
                     </div>
                 </form>
                 <br>
@@ -47,10 +54,7 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <a class="btn btn-sm btn-secondary" href="{{ url_for('search_page') }}"> Search car </a>
 
-    </div>
 </div>
 </body>
 </html>

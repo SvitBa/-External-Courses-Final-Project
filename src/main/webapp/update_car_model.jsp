@@ -7,6 +7,7 @@
     <title> Update car model </title>
 </head>
 <body>
+<jsp:include page="Admin_menu.jsp"/>
 <h3> Update car model </h3>
 <hr>
 <br>

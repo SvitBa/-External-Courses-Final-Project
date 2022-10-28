@@ -1,6 +1,6 @@
 <%@ taglib uri= "http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -16,13 +16,14 @@
     <script src="sorttable.js"></script>
 </head>
 <body>
+<jsp:include page="header.jsp"/>
 <div class="container">
     <div class="row">
         <div class="col-sm-4">
             <h2>Filters </h2>
             <input type="button" value="Clear filter"
                    onclick="window.location.href='CarServlet'">
-            <form action="/carRentApp/CarServlet" metod="POST">
+            <form action="/carRentApp/CarServlet" method="POST">
                 <input type="hidden" name="command" value="FILTER"/>
                 <div class="container">
                     <h3>Quality class</h3>

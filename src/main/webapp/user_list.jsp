@@ -7,6 +7,7 @@
 
 </head>
 <body>
+<jsp:include page="header.jsp"/>
 <h2> User list for admin</h2>
 <hr>
 <br>
@@ -26,12 +27,12 @@
             <th> Action</th>
         </tr>
         <c:forEach var="tempUser" items="${user_list}">
-            <c:url var="tempLink" value="UserServlet">
+            <c:url var="tempLink" value="UserService">
                 <c:param name="command" value="LOAD"/>
                 <c:param name="userId" value="${tempUser.id}"/>
             </c:url>
 
-            <c:url var="deleteLink" value="UserServlet">
+            <c:url var="deleteLink" value="UserService">
                 <c:param name="command" value="DELETE"/>
                 <c:param name="userId" value="${tempUser.id}"/>
             </c:url>

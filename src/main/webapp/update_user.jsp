@@ -7,13 +7,14 @@
     <title> Update car model </title>
 </head>
 <body>
+<jsp:include page="header.jsp"/>
 <h3> Update user by Admin </h3>
 <hr>
 <br>
 
 <div id="container" class="col-sm-6">
 
-    <form action="UserServlet" metod="GET">
+    <form action="UserServlet" metod="POST">
         <input type="hidden" name="command" value="UPDATE"/>
         <input type="hidden" name="userId" value="${USER_ID.id}"/>
         <table>

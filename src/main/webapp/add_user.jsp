@@ -4,50 +4,46 @@
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
           integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-    <title> Add car </title>
+    <title> Add user </title>
 </head>
 <body>
 <jsp:include page="Admin_menu.jsp"/>
-<h3> Add car </h3>
+<h3> Add user for admin </h3>
 <hr>
 <br>
+
 <div id="container" class="col-sm-6">
 
-    <form action="/carRentApp/CarServlet" method="POST">
+    <form action="UserServlet" method="POST">
         <input type="hidden" name="command" value="ADD"/>
-        <input type="hidden" name="carModelId" value="${CAR_MODEL_ID.id}"/>
         <table>
             <tbody>
             <tr>
-                <td><label> Quality class </label></td>
-                <td> "${CAR_MODEL_ID.qualityClass}"</td>
+                <td><label> login</label></td>
+                <td><input type="text" name="login"/></td>
             </tr>
             <tr>
-                <td><label> Brand</label></td>
-                <td> "${CAR_MODEL_ID.brand}"</td>
+                <td><label> email </label></td>
+                <td><input type="text" name="email"/></td>
             </tr>
             <tr>
-                <td><label> Brand</label></td>
-                <td> "${CAR_MODEL_ID.model}"</td>
+                <td><label> passport </label></td>
+                <td><input type="text" name="passport"/></td>
+            </tr>
+            <tr>
+                <td><label> password </label></td>
+                <td><input type="password" name="password"/></td>
             </tr>
 
             <tr>
-                <td><label> Rent Price per day </label></td>
-                <td><input type="text" name="price"/></td>
-            </tr>
-            <tr>
                 <td><label> </label></td>
-                <td><input type="submit" value="add car" class="save"/></td>
+                <td><input type="submit" value="save" class="save"/></td>
             </tr>
             </tbody>
         </table>
         <div style="clear: both;"></div>
-        <p>
-            <a href="CarModelServlet"> Back to Car Model list </a>
-        </p>
 
     </form>
-
-
+</div>
 </body>
 </html>

@@ -52,19 +52,21 @@ public class InvoiceRepository {
         return invoiceList;
     }
 
-    public static Invoice getInvoiceById(int id) throws DBException {
-        Invoice invoice = null;
+
+    public static List<Invoice> getInvoiceById(int id) throws DBException {
+        List<Invoice> invoiceList = null;
         try (Connection connection = DataBaseConnection.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(FIND_INVOICE_BY_ID)) {
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                invoice = extractInvoiceFromResultSet(resultSet);
+            while (resultSet.next()) {
+                Invoice invoice = extractInvoiceFromResultSet(resultSet);
+                invoiceList.add(invoice);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return invoice;
+        return invoiceList;
     }
 
     public static Invoice updateInvoice(Invoice newInvoice) {
@@ -95,7 +97,7 @@ public class InvoiceRepository {
         return newInvoice;
     }
 
-    public static void deleteBookingById(int id) {
+    public static void deleteInvoiceById(int id) {
         try (Connection con = DataBaseConnection.getInstance().getConnection();
              PreparedStatement stmt = con.prepareStatement(DELETE_INVOICE)
         ) {

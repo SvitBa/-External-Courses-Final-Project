@@ -21,7 +21,9 @@ public class CarRepository {
             " WHERE quality_class = ? AND brand = ?";
     private static final String FIND_CAR_BY_ID = FIND_ALL_CAR + " WHERE car_id = ?";
 
-    private static final String UPDATE_CAR = "UPDATE car SET quality_class = ?, brand =?, model = ? WHERE id = ?";
+    private static final String UPDATE_CAR = "UPDATE car SET quality_class = ?, brand =?, model = ? WHERE car_id = ?";
+
+    private static final String UPDATE_CAR_CURRENT_AVAILABLE = "UPDATE car SET currently_available = ? WHERE car_id = ?";
 
     private static final String DELETE_CAR = "DELETE FROM car WHERE id = ?";
 
@@ -126,6 +128,20 @@ public class CarRepository {
              PreparedStatement statement = con.prepareStatement(UPDATE_CAR)
         ) {
             statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return car;
+    }
+
+    public static Car updateCarCurrentAvailable(Car car) {
+        try (Connection con = DataBaseConnection.getInstance().getConnection();
+             PreparedStatement statement = con.prepareStatement(UPDATE_CAR_CURRENT_AVAILABLE)
+        ) {
+            statement.setBoolean(1, car.isCarCurrentAvailable());
+            statement.setInt(2, car.getId());
+            statement.executeUpdate();
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

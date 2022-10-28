@@ -33,7 +33,7 @@ public class BookingServlet extends HttpServlet {
         String theCommand = request.getParameter("command");
 
         if (theCommand == null) {
-            theCommand = "LIST";
+            theCommand = "LOAD";
         }
 
         // route appropriate method
@@ -41,6 +41,12 @@ public class BookingServlet extends HttpServlet {
 
             case "ADD":
                 addBooking(request, response);
+                break;
+            case "APPROVE":
+                approveBooking(request, response);
+                break;
+            case "CANCEL":
+                cancelBooking(request, response);
                 break;
             case "PREPARE":
                 prepareBooking(request, response);
@@ -51,14 +57,14 @@ public class BookingServlet extends HttpServlet {
             case "LIST":
                 listUserBooking(request, response);
                 break;
-            case "LIST_ALL":
-                listAllBooking(request, response);
+            case "LOAD":
+                loadAllBooking(request, response);
                 break;
             case "UPDATE":
                 updateBooking(request, response);
                 break;
             default:
-                listUserBooking(request, response);
+                loadAllBooking(request, response);
         }
     }
 
@@ -163,6 +169,67 @@ public class BookingServlet extends HttpServlet {
         listUserBooking(request, response);
     }
 
+    private void approveBooking(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // step1: read booking info from data
+        String bookingId = request.getParameter("bookingId");
+        String cancelComment ="-";
+        String carId = request.getParameter("carId");
+        String carAvailable = request.getParameter("carAvailable");
+
+        // step2: load existing booking object
+        Booking updateBooking = null;
+        try {
+            updateBooking = BookingRepository.getBookingById(Integer.parseInt(bookingId));
+        } catch (DBException e) {
+            throw new RuntimeException(e);
+        }
+
+        // step 4: update booking details
+        updateBooking.setBookingStatusCode(4);
+        updateBooking.setCancelComment(cancelComment);
+
+        // step 5: update db
+        BookingRepository.updateBookingStatusCode(updateBooking);
+
+        // step 6: load existing car object
+        Car car = CarRepository.getCarById(Integer.parseInt(carId));
+
+        // step 7: update booking details
+        car.setCarCurrentAvailable(Boolean.parseBoolean(carAvailable));
+
+        // step 8: update db
+        CarRepository.updateCarCurrentAvailable(car);
+
+        // step 9: send back to the list page
+        loadAllBooking(request, response);
+
+    }
+
+    private void cancelBooking(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // step1: read booking info from data
+        String bookingId = request.getParameter("bookingId");
+        String cancelComment = request.getParameter("cancelComment");
+
+        // step2: load existing booking object
+        Booking updateBooking = null;
+        try {
+            updateBooking = BookingRepository.getBookingById(Integer.parseInt(bookingId));
+        } catch (DBException e) {
+            throw new RuntimeException(e);
+        }
+
+        // step 4: update booking details
+        updateBooking.setBookingStatusCode(3);
+        updateBooking.setCancelComment(cancelComment);
+
+        // step 5: update db
+        BookingRepository.updateBookingStatusCode(updateBooking);
+
+        // step 6: send back to the list page
+        loadAllBooking(request, response);
+
+    }
+
     public void listUserBooking(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // step 0: receive userId info from data
         String userId = request.getParameter("userId");
@@ -186,8 +253,7 @@ public class BookingServlet extends HttpServlet {
 
     }
 
-    public void listAllBooking(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+    public void loadAllBooking(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         try {
             bookingList = BookingRepository.getAllBooking();

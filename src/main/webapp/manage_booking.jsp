@@ -12,48 +12,37 @@
             crossorigin="anonymous"></script>
     <script src="sorttable.js"></script>
 
-    <% BookingServlet %>
 
-    <title> Manage all user booking </title>
+
+    <title> Manager menu</title>
 </head>
 <body>
+<jsp:include page="Manager_menu.jsp"/>
 <hr>
 <br>
 <div id="container" class="col-sm-8">
 
 
     <div class="row">
-        <h3> All user Booking </h3>
+
         <table class="sortable" border="1">
             <tr align="center">
 
+                <th> BookingId </th>
                 <th> brand</th>
                 <th> model</th>
                 <th> Pick up date</th>
                 <th> Return date</th>
                 <th> Number of days</th>
                 <th> Price pre day</th>
+                <th> Car Available</th>
                 <th> Driver</th>
                 <th> Total price</th>
-                <th> Action</th>
+                <th colspan="3"> Action</th>
+                <th colspan="2"> Invoice</th>
             </tr>
 
             <c:forEach var="tempBooking" items="${booking_list}">
-                <c:url var="cancelLink" value="BookingServlet">
-                    <c:param name="command" value="CANCEL"/>
-                    <c:param name="bookingId" value="${BOOKING_ID}"/>
-                </c:url>
-                <c:url var="tempLink" value="BookingServlet">
-                    <c:param name="command" value="UPDATE"/>
-                    <c:param name="bookingId" value="${BOOKING_ID}"/>
-                    <c:param name="userId" value="${USER_ID}"/>
-                    <c:param name="carId" value="${tempCar.id}"/>
-                </c:url>
-                <c:url var="deleteLink" value="BookingServlet">
-                    <c:param name="command" value="DELETE"/>
-                    <c:param name="userId" value="${USER_ID}"/>
-                    <c:param name="bookingId" value="${tempBooking.id}"/>
-                </c:url>
 
                 <tr align="center">
 
@@ -64,18 +53,41 @@
                     <td> ${tempBooking.returnDate}</td>
                     <td> ${tempBooking.numberOfDays}</td>
                     <td> ${tempBooking.car.rentPricePerDay}</td>
+                    <td> ${tempBooking.car.carCurrentAvailable}</td>
                     <td> ${tempBooking.driver}</td>
                     <td> ${tempBooking.totalPrice}</td>
-                    <td><a href="${tempLink}">
-                        <button class="btn btn-info"> update</button>
-                    </a>
-                        | <a href="${deleteLink}">
-                            <button class="btn btn-warning"> delete</button>
-                        </a>
+                    <td> <form method="POST" action="/carRentApp/BookingServlet">
+                        <input type="hidden" name="command" value="APPROVE"/>
+                        <input type="hidden" name="bookingId" value="${tempBooking.id}"/>
+                        <input type="hidden" name="carId" value="${tempBooking.car.id}"/>
+                        <input type="hidden" name="carAvailable" value="false"/>
+                        <button type="submit" class="btn btn-info"> approve </button>
+                    </form>
                     </td>
-                    <td><a href="${cancelLink}">
-                        <button class="btn btn-warning"> cancel</button>
-                    </a>
+                    <td> <form method="POST" action="/carRentApp/BookingServlet">
+                    <input type="hidden" name="command" value="CANCEL"/>
+                    <input type="hidden" name="bookingId" value="${tempBooking.id}"/>
+                    <input type="text" name="cancelComment">
+
+                        <button type="submit" class="btn btn-warning"> cancel</button>
+                    </form> </td>
+                    <td> <form method="POST" action="/carRentApp/CarServlet">
+                        <input type="hidden" name="command" value="RETURN"/>
+                        <input type="hidden" name="bookingId" value="${tempBooking.id}"/>
+                        <input type="hidden" name="carId" value="${tempBooking.car.id}"/>
+                        <input type="hidden" name="carAvailable" value="true"/>
+                        <button type="submit" class="btn btn-secondary"> return car</button>
+                    </form>
+                    </td>
+                    <td> <form method="POST" action="/carRentApp/InvoiceServlet">
+                        <input type="hidden" name="command" value="PREPARE"/>
+                        <input type="hidden" name="bookingId" value="${tempBooking.id}"/>
+                        <input type="hidden" name="carId" value="${tempBooking.car.id}"/>
+                        <input type="radio" name="type" value="REGULAR"/> REGULAR
+                        <input type="radio" name="type" value="DAMAGE"/> DAMAGE
+                        <button type="submit" class="btn btn-dark"> generate </button>
+                    </form>
+                    </td>
                 </tr>
             </c:forEach>
         </table>

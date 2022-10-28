@@ -16,6 +16,8 @@ public class User implements Serializable {
     private int userRoleId;
     private boolean userStateActive;
 
+    public User() {
+    }
 
     private User(String login, String email, String password, String passport) {
         this.id = 1;
@@ -62,7 +64,8 @@ public class User implements Serializable {
             case 3:
                 setRole("admin");
                 break;
-            default: setRole("client");
+            default:
+                setRole("client");
         }
 
     }
@@ -123,12 +126,12 @@ public class User implements Serializable {
         this.userStateActive = userStateActive;
     }
 
-    public void setDocument(String passport) {
-        this.passport = passport;
-    }
-
     public String getPassport() {
         return passport;
+    }
+
+    public void setPassport(String passport) {
+        this.passport = passport;
     }
 
     @Override

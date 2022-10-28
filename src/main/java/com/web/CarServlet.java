@@ -1,7 +1,9 @@
 package com.web;
 
 import com.data.DBException;
+import com.data.entity.Booking;
 import com.data.entity.Car;
+import com.data.repository.BookingRepository;
 import com.data.repository.CarModelRepository;
 import com.data.repository.CarRepository;
 
@@ -51,9 +53,48 @@ public class CarServlet extends HttpServlet {
             case "FILTER":
                 filterCar(request, response);
                 break;
+            case "RETURN":
+                returnCar(request, response);
+                break;
             default:
                 listCar(request, response);
         }
+    }
+
+    public void returnCar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // step 0: get selected parameter
+        String carId = request.getParameter("carId");
+        String carAvailable = request.getParameter("carAvailable");
+        String bookingId = request.getParameter("bookingId");
+        String cancelComment ="-";
+
+        // step1: load existing car object
+        Car car = CarRepository.getCarById(Integer.parseInt(carId));
+
+        // step 2: update booking details
+        car.setCarCurrentAvailable(Boolean.parseBoolean(carAvailable));
+
+        // step 3: update db
+        CarRepository.updateCarCurrentAvailable(car);
+
+        // step 4: load existing booking object
+        Booking updateBooking = null;
+        try {
+            updateBooking = BookingRepository.getBookingById(Integer.parseInt(bookingId));
+        } catch (DBException e) {
+            throw new RuntimeException(e);
+        }
+
+        // step 5: update booking details
+        updateBooking.setBookingStatusCode(6);
+        updateBooking.setCancelComment(cancelComment);
+
+        // step 6: update db
+        BookingRepository.updateBookingStatusCode(updateBooking);
+
+        // step 7: get request dispatcher = send to the BookingServlet
+        getServletContext().getRequestDispatcher("/BookingServlet").forward(request, response);
+
     }
 
     public void filterCar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

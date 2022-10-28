@@ -1,10 +1,13 @@
 package com.data.repository;
 
-import com.data.DataBaseConnection;
 import com.data.DBException;
+import com.data.DataBaseConnection;
 import com.data.entity.User;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +38,7 @@ public class UserRepository {
     public static void createUser(User user) throws DBException {
         try (java.sql.Connection connection = DataBaseConnection.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(CREATE_USER);
-             ){
+        ) {
 
             statement.setString(1, user.getLogin());
             statement.setString(2, user.getEmail());
@@ -78,8 +81,8 @@ public class UserRepository {
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 user = new User(rs.getInt("id"), rs.getString("login"),
-                        rs.getString("email"), rs.getString("password"),
-                        rs.getString("passport"));
+                        rs.getString("email"), rs.getString("passport"),
+                        rs.getString("password"));
                 user.setUserRoleId(rs.getInt("user_role_id"));
                 user.setUserStateActive(rs.getBoolean("user_state"));
             }
@@ -99,13 +102,9 @@ public class UserRepository {
             statement.setString(2, password);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                user = new User(rs.getInt("id"), rs.getString("login"),
-                        rs.getString("email"), rs.getString("password"),
-                        rs.getString("passport"));
-                user.setUserRoleId(rs.getInt("user_role_id"));
-                user.setUserStateActive(rs.getBoolean("user_state"));
+                user = extractUserFromResultSet(rs);
             } else {
-                user = new User (1, "1", "1", "1", "1");
+                user = new User(1, "1", "1", "1", "1");
             }
         } catch (SQLException e) {
             throw new DBException("Get user for login FAIL", e);
@@ -121,11 +120,7 @@ public class UserRepository {
             statement.setInt(1, userRoleId);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                User user = new User(rs.getInt("id"), rs.getString("login"),
-                        rs.getString("email"), rs.getString("password"),
-                        rs.getString("passport"));
-                user.setUserRoleId(rs.getInt("user_role"));
-                user.setUserStateActive(rs.getBoolean("user_role_id"));
+                User user = extractUserFromResultSet(rs);
                 userList.add(user);
             }
 
@@ -143,11 +138,7 @@ public class UserRepository {
             statement.setBoolean(1, userState);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                User user = new User(rs.getInt("id"), rs.getString("login"),
-                        rs.getString("email"), rs.getString("password"),
-                        rs.getString("passport"));
-                user.setUserRoleId(rs.getInt("user_role"));
-                user.setUserStateActive(rs.getBoolean("user_role_id"));
+                User user = extractUserFromResultSet(rs);
                 userList.add(user);
             }
 
@@ -219,5 +210,17 @@ public class UserRepository {
         }
     }
 
+    private static User extractUserFromResultSet(ResultSet resultSet) throws SQLException, DBException {
+        User user = new User();
+        user.setId(resultSet.getInt("id"));
+        user.setLogin(resultSet.getString("login"));
+        user.setPassport(resultSet.getString("passport"));
+        user.setEmail(resultSet.getString("email"));
+        user.setPassword(resultSet.getString("password"));
+        user.setUserRoleId(resultSet.getInt("user_role_id"));
+        user.setUserStateActive(resultSet.getBoolean("user_state"));
+
+        return user;
+    }
 
 }
