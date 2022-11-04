@@ -1,8 +1,9 @@
 package com.web;
 
-import com.data.DBException;
-import com.data.repository.UserRepository;
-import com.data.entity.User;
+import com.database.DBException;
+import com.database.entity.UserEntity;
+import com.database.repository.UserDAO;
+import com.database.repository.UserRepository;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -15,8 +16,12 @@ import java.util.List;
 
 @WebServlet("/UserService")
 public class UserServlet extends HttpServlet {
+    private UserDAO userRepository = new UserRepository();
 
-
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doPost(req, resp);
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -61,9 +66,9 @@ public class UserServlet extends HttpServlet {
         String passport = request.getParameter("passport");
         String password = request.getParameter("password");
 
-        User newUser = new User(Integer.parseInt(userId), login, email, passport, password);
+        UserEntity newUser = new UserEntity(Integer.parseInt(userId), login, email, passport, password);
 
-        UserRepository.updateUserProfile(newUser);
+        userRepository.updateUserProfile(newUser);
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("my_profile.jsp");
         dispatcher.forward(request, response);
@@ -78,10 +83,10 @@ public class UserServlet extends HttpServlet {
         String userRoleId = request.getParameter("userRoleId");
         String userStateActive = request.getParameter("userState");
 
-        User newUser = new User(Integer.parseInt(userId), login, email, passport, password,
+        UserEntity newUser = new UserEntity(Integer.parseInt(userId), login, email, passport, password,
                 Integer.parseInt(userRoleId), Boolean.parseBoolean(userStateActive));
 
-        UserRepository.updateUserByAdmin(newUser);
+        userRepository.updateUserByAdmin(newUser);
 
         listUser(request, response);
     }
@@ -89,8 +94,7 @@ public class UserServlet extends HttpServlet {
     private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String userId = request.getParameter("userId");
 
-        UserRepository.deleteUserById(Integer.parseInt(userId));
-
+        userRepository.deleteUserById(Integer.parseInt(userId));
         listUser(request, response);
     }
 
@@ -98,12 +102,10 @@ public class UserServlet extends HttpServlet {
     private void loadUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String userId = request.getParameter("userId");
 
-        User userById = null;
-        try {
-            userById = UserRepository.getUserById(Integer.parseInt(userId));
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
+        UserEntity userById = null;
+
+        userById = userRepository.getUserById(Integer.parseInt(userId));
+
 
         request.setAttribute("USER_ID", userById);
 
@@ -111,15 +113,14 @@ public class UserServlet extends HttpServlet {
         dispatcher.forward(request, response);
 
     }
+
     private void loadUserProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String userId = request.getParameter("userId");
 
-        User userById = null;
-        try {
-            userById = UserRepository.getUserById(Integer.parseInt(userId));
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
+        UserEntity userById = null;
+
+        userById = userRepository.getUserById(Integer.parseInt(userId));
+
 
         request.setAttribute("USER_ID", userById);
 
@@ -134,21 +135,16 @@ public class UserServlet extends HttpServlet {
         String password = request.getParameter("password");
         String passport = request.getParameter("passport");
 
-        User newUser = User.createUser(login, email, password, passport);
+        UserEntity newUser = UserEntity.createUser(login, email, password, passport);
 
-        UserRepository.createUser(newUser);
+        userRepository.createUser(newUser);
 
         listUser(request, response);
 
     }
 
     public void listUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<User> userList = null;
-        try {
-            userList = UserRepository.getAllUser();
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
+        List<UserEntity> userList = userRepository.getAllUser();
 
         request.setAttribute("user_list", userList);
 

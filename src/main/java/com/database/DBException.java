@@ -1,4 +1,4 @@
-package com.data;
+package com.database;
 
 public class DBException extends Exception {
     public DBException() {

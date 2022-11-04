@@ -44,14 +44,14 @@
                     <c:param name="userId" value="${USER_ID}"/>
                 </c:url>
                 <c:url var="tempLink" value="BookingServlet">
-                    <c:param name="command" value="UPDATE"/>
-                    <c:param name="bookingId" value="${BOOKING_ID}"/>
-                    <c:param name="userId" value="${USER_ID}"/>
-                    <c:param name="carId" value="${tempCar.id}"/>
+                    <c:param name="command" value="PREPARE"/>
+                    <c:param name="bookingId" value="${tempBooking.id}"/>
+                    <c:param name="userId" value="${user.id}"/>
+                    <c:param name="carId" value="${tempBooking.car.id}"/>
                 </c:url>
                 <c:url var="deleteLink" value="BookingServlet">
                     <c:param name="command" value="DELETE"/>
-                    <c:param name="userId" value="${USER_ID}"/>
+                    <c:param name="userId" value="${user.id}"/>
                     <c:param name="bookingId" value="${tempBooking.id}"/>
                 </c:url>
 

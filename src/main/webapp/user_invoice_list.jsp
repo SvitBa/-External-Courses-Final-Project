@@ -13,15 +13,12 @@
     <script src="sorttable.js"></script>
 
 
-
-    <title> Invoice list</title>
 </head>
 <body>
-<jsp:include page="header.jsp"/>
-<hr>
-<br>
 <div id="container" class="col-sm-8">
-
+<div class="row">
+        <h3> My Invoice </h3>
+    </div>
 
     <div class="row">
 
@@ -42,7 +39,7 @@
                 <th> Total price</th>
             </tr>
 
-            <c:forEach var="tempInvoice" items="${all_invoice_list}">
+            <c:forEach var="tempInvoice" items="${invoice_list}">
 
                 <tr align="center">
 

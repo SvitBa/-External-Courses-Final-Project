@@ -15,6 +15,8 @@ public class LogoutServlet extends HttpServlet {
     @Override
     public void doPost (HttpServletRequest request, HttpServletResponse response)throws IOException {
         request.getSession().setAttribute("user", null);
+        request.getSession().setAttribute("booking_list", null);
+        request.getSession().setAttribute("invoice_list", null);
         response.sendRedirect(request.getContextPath() + "/");
     }
 

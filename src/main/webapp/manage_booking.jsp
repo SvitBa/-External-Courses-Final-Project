@@ -17,7 +17,7 @@
     <title> Manager menu</title>
 </head>
 <body>
-<jsp:include page="Manager_menu.jsp"/>
+<jsp:include page="header.jsp"/>
 <hr>
 <br>
 <div id="container" class="col-sm-8">
@@ -38,11 +38,11 @@
                 <th> Car Available</th>
                 <th> Driver</th>
                 <th> Total price</th>
-                <th colspan="3"> Action</th>
-                <th colspan="2"> Invoice</th>
+                <th colspan="3"> Booking Action</th>
+                <th colspan="2"> Generate Invoice</th>
             </tr>
 
-            <c:forEach var="tempBooking" items="${booking_list}">
+            <c:forEach var="tempBooking" items="${manager_booking_list}">
 
                 <tr align="center">
 
@@ -80,14 +80,21 @@
                     </form>
                     </td>
                     <td> <form method="POST" action="/carRentApp/InvoiceServlet">
-                        <input type="hidden" name="command" value="PREPARE"/>
+                        <input type="hidden" name="command" value="ADD"/>
                         <input type="hidden" name="bookingId" value="${tempBooking.id}"/>
                         <input type="hidden" name="carId" value="${tempBooking.car.id}"/>
-                        <input type="radio" name="type" value="REGULAR"/> REGULAR
-                        <input type="radio" name="type" value="DAMAGE"/> DAMAGE
-                        <button type="submit" class="btn btn-dark"> generate </button>
-                    </form>
-                    </td>
+                        <input type="hidden" name="type" value="REGULAR"/>
+                        <input type="hidden" name="price" value="${tempBooking.totalPrice}"/>
+                        <button type="submit" class="btn btn-dark"> REGULAR </button>
+                    </form> </td>
+                    <td> <form method="POST" action="/carRentApp/InvoiceServlet">
+                        <input type="hidden" name="command" value="ADD"/>
+                        <input type="hidden" name="bookingId" value="${tempBooking.id}"/>
+                        <input type="hidden" name="carId" value="${tempBooking.car.id}"/>
+                        <input type="number" name="price" min="0" value="${tempBooking.totalPrice}" step=".01">
+                        <input type="hidden" name="type" value="DAMAGE"/>
+                        <button type="submit" class="btn btn-dark"> DAMAGE </button>
+                    </form> </td>
                 </tr>
             </c:forEach>
         </table>

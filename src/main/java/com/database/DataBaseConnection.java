@@ -1,4 +1,4 @@
-package com.data;
+package com.database;
 
 import org.apache.log4j.Logger;
 
@@ -33,9 +33,9 @@ public class DataBaseConnection {
             ctx = new InitialContext();
             DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/carrentalapp");
             connection= ds.getConnection();
-//            connection = DriverManager.getConnection(CONNECTION_URL);
+
         } catch (NamingException | SQLException e) {
-//            logger.error("DataBaseConnection from pool not established");
+            logger.error("DataBaseConnection from pool not established");
             System.out.println("DataBaseConnection from pool not established");
         }
         return connection;
@@ -45,7 +45,7 @@ public class DataBaseConnection {
         try {
             connection.rollback();
         } catch (SQLException e) {
-//            logger.error("DataBaseConnection from pool not rollbacked");
+            logger.error("DataBaseConnection from pool not rollbacked");
             System.out.println("DataBaseConnection from pool not rollbacked");
         }
     }
@@ -54,7 +54,7 @@ public class DataBaseConnection {
         try {
             connection.close();
         } catch (SQLException e) {
-//            logger.error("DataBaseConnection from pool not closed");
+            logger.error("DataBaseConnection from pool not closed");
             System.out.println("DataBaseConnection from pool not closed");
         }
     }

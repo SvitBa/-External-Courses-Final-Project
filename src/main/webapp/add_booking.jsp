@@ -15,7 +15,7 @@
     <title> My booking </title>
 </head>
 <body>
-<jsp:include page="Customer_menu.jsp"/>
+<jsp:include page="header.jsp"/>
 <h3> Add booking </h3>
 <hr>
 <br>
@@ -25,7 +25,7 @@
         <form action="/carRentApp/BookingServlet" method="POST">
             <input type="hidden" name="command" value="ADD"/>
             <input type="hidden" name="carId" value="${SELECTED_CAR.id}"/>
-            <input type="hidden" name="userId" value="${USER_ID}"/>
+            <input type="hidden" name="userId" value="${user.id}"/>
             <table>
                 <tbody>
                 <tr>

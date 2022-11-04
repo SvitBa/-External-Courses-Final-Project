@@ -1,10 +1,11 @@
 package com.web;
 
-import com.data.DBException;
-import com.data.entity.Booking;
-import com.data.entity.Invoice;
-import com.data.repository.BookingRepository;
-import com.data.repository.InvoiceRepository;
+import com.database.entity.BookingEntity;
+import com.database.entity.InvoiceEntity;
+import com.database.repository.BookingDAO;
+import com.database.repository.BookingRepository;
+import com.database.repository.InvoiceDAO;
+import com.database.repository.InvoiceRepository;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -19,8 +20,9 @@ import java.util.List;
 @WebServlet("/InvoiceServlet")
 public class InvoiceServlet extends HttpServlet {
 
-    List<Invoice> invoiceList = null;
-
+    List<InvoiceEntity> invoiceList = null;
+    private BookingDAO bookingRepository = new BookingRepository();
+    private InvoiceDAO invoiceRepository = new InvoiceRepository();
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doPost(request, response);
@@ -50,25 +52,21 @@ public class InvoiceServlet extends HttpServlet {
 
     private void addInvoice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String bookingId = request.getParameter("bookingId");
-        String state = request.getParameter("state");
         String invoiceType = request.getParameter("type");
         String price = request.getParameter("price");
 
-        Invoice newInvoice = new Invoice();
+        InvoiceEntity newInvoice = new InvoiceEntity();
 
-        Booking booking = null;
-        try {
-            booking = BookingRepository.getBookingById(Integer.parseInt(bookingId));
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
+        BookingEntity booking = null;
+
+        booking = bookingRepository.getBookingById(Integer.parseInt(bookingId));
+
 
         newInvoice.setBooking(booking);
-        newInvoice.setStatus(state);
         newInvoice.setType(invoiceType);
-        newInvoice.setTotalPrice(BigDecimal.valueOf(Long.parseLong(price)));
+        newInvoice.setTotalPrice(new BigDecimal(price));
 
-        InvoiceRepository.createInvoice(newInvoice);
+        invoiceRepository.createInvoice(newInvoice);
 
         loadAllInvoice(request, response);
     }
@@ -78,28 +76,21 @@ public class InvoiceServlet extends HttpServlet {
         String invoiceType = request.getParameter("type");
         String price = request.getParameter("price");
 
-        Invoice newInvoice = new Invoice();
+        InvoiceEntity newInvoice = new InvoiceEntity();
 
-        Booking booking = null;
-        try {
-            booking = BookingRepository.getBookingById(Integer.parseInt(bookingId));
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
+        BookingEntity booking = bookingRepository.getBookingById(Integer.parseInt(bookingId));
+
 
         loadAllInvoice(request, response);
     }
 
     public void listUserInvoice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String userId = request.getParameter("userId");
-        List<Booking> userBookingList = null;
-        try {
-            userBookingList = BookingRepository.getAllBookingByUserId(Integer.parseInt(userId));
-            for (Booking booking : userBookingList) {
-                invoiceList.addAll(InvoiceRepository.getInvoiceById(booking.getId()));
-            }
-        } catch (DBException e) {
-            throw new RuntimeException(e);
+        List<BookingEntity> userBookingList = null;
+
+        userBookingList = bookingRepository.getAllBookingByUserId(Integer.parseInt(userId));
+        for (BookingEntity booking : userBookingList) {
+            invoiceList.addAll(invoiceRepository.getInvoiceById(booking.getId()));
         }
 
         request.setAttribute("USER_ID", userId);
@@ -110,13 +101,9 @@ public class InvoiceServlet extends HttpServlet {
     }
 
     public void loadAllInvoice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try {
-            invoiceList = InvoiceRepository.getAllInvoice();
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
 
-        request.setAttribute("invoice_list", invoiceList);
+        invoiceList = invoiceRepository.getAllInvoice();
+        request.setAttribute("all_invoice_list", invoiceList);
         RequestDispatcher dispatcher = request.getRequestDispatcher("view_invoice_list.jsp");
         dispatcher.forward(request, response);
     }

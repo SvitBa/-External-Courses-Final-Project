@@ -1,8 +1,8 @@
-package com.data.entity;
+package com.database.entity;
 
 import java.io.Serializable;
 
-public class User implements Serializable {
+public class UserEntity implements Serializable {
 
     private int id;
     private String login;
@@ -16,10 +16,10 @@ public class User implements Serializable {
     private int userRoleId;
     private boolean userStateActive;
 
-    public User() {
+    public UserEntity() {
     }
 
-    private User(String login, String email, String password, String passport) {
+    private UserEntity(String login, String email, String password, String passport) {
         this.id = 1;
         this.login = login;
         this.email = email;
@@ -30,7 +30,7 @@ public class User implements Serializable {
         this.userStateActive = true;
     }
 
-    public User(int id, String login, String email, String passport, String password) {
+    public UserEntity(int id, String login, String email, String passport, String password) {
         this.id = id;
         this.login = login;
         this.email = email;
@@ -41,7 +41,7 @@ public class User implements Serializable {
         this.userStateActive = true;
     }
 
-    public User(int id, String login, String email, String passport, String password, int userRoleId, boolean userStateActive) {
+    public UserEntity(int id, String login, String email, String passport, String password, int userRoleId, boolean userStateActive) {
         this.id = id;
         this.login = login;
         this.email = email;
@@ -52,8 +52,8 @@ public class User implements Serializable {
         this.userStateActive = userStateActive;
     }
 
-    public static User createUser(String login, String email, String password, String passport) {
-        return new User(login, email, password, passport);
+    public static UserEntity createUser(String login, String email, String password, String passport) {
+        return new UserEntity(login, email, password, passport);
     }
 
     private void getUserRole(int userRoleId) {

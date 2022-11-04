@@ -1,8 +1,8 @@
-package com.data.entity;
+package com.database.entity;
 
 import java.io.Serializable;
 
-public class CarModel implements Serializable {
+public class CarModelEntity implements Serializable {
 
     private int id;
 
@@ -10,19 +10,19 @@ public class CarModel implements Serializable {
     private String model;
     private String qualityClass;
 
-    public CarModel () {
+    public CarModelEntity() {
 
     }
 
 
-    public CarModel(String brand, String model, String qualityClass) {
+    public CarModelEntity(String brand, String model, String qualityClass) {
         this.id = 1;
         this.brand = brand;
         this.model = model;
         this.qualityClass = qualityClass;
     }
 
-    public CarModel(int id,String brand, String model, String qualityClass) {
+    public CarModelEntity(int id, String brand, String model, String qualityClass) {
         this.id = id;
         this.brand = brand;
         this.model = model;

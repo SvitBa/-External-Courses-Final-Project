@@ -1,8 +1,9 @@
 package com.web;
 
-import com.data.DBException;
-import com.data.entity.User;
-import com.data.repository.UserRepository;
+import com.database.entity.BookingEntity;
+import com.database.entity.InvoiceEntity;
+import com.database.entity.UserEntity;
+import com.database.repository.*;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,9 +12,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
+
+    private BookingDAO bookingRepository = new BookingRepository();
+    private InvoiceDAO invoiceRepository = new InvoiceRepository();
+    private UserDAO userRepository = new UserRepository();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // step1: read user data from form
@@ -25,23 +31,29 @@ public class LoginServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
 
-        User user = null;
-
         // step 2: find user in db
-        try {
-            user = UserRepository.getUserForLogin(username, password);
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
+        UserEntity user = userRepository.getUserForLogin(username, password);
 
         if (user.getId() == 1) {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
             dispatcher.forward(request, response);
         } else {
 
-            // step3: place user in request attribute
+            List<InvoiceEntity> invoiceList = null;
+            List<BookingEntity> bookingList = bookingRepository.getAllBookingByUserId(user.getId());
+
+            for (BookingEntity booking : bookingList) {
+                List<InvoiceEntity> oneBookingInvoiceList = invoiceRepository.getInvoiceById(booking.getId());
+                if (oneBookingInvoiceList != null) {
+                    invoiceList.addAll(oneBookingInvoiceList);
+                }
+            }
+
+            // step3: place user, booking_list in request attribute
             request.setAttribute("USER_ID", user.getId());
             request.getSession().setAttribute("user", user);
+            request.getSession().setAttribute("booking_list", bookingList);
+            request.getSession().setAttribute("invoice_list", invoiceList);
 
             //step 4: send back to the search page
             RequestDispatcher dispatcher = request.getRequestDispatcher("CarServlet");

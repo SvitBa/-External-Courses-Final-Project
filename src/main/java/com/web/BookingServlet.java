@@ -1,12 +1,9 @@
 package com.web;
 
-import com.data.DBException;
-import com.data.entity.Booking;
-import com.data.entity.Car;
-import com.data.entity.User;
-import com.data.repository.BookingRepository;
-import com.data.repository.CarRepository;
-import com.data.repository.UserRepository;
+import com.database.entity.BookingEntity;
+import com.database.entity.CarEntity;
+import com.database.entity.UserEntity;
+import com.database.repository.*;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -21,7 +18,12 @@ import java.util.List;
 @WebServlet("/BookingServlet")
 public class BookingServlet extends HttpServlet {
 
-    List<Booking> bookingList = null;
+    private List<BookingEntity> bookingList = null;
+
+    private BookingDAO bookingRepository = new BookingRepository();
+    private UserDAO userRepository = new UserRepository();
+
+    private CarDAO carRepository = new CarRepository();
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -74,7 +76,7 @@ public class BookingServlet extends HttpServlet {
         String carId = request.getParameter("carId");
 
         //step 2: load car details
-        Car selectedCar = CarRepository.getCarById(Integer.parseInt(carId));
+        CarEntity selectedCar = carRepository.getCarById(Integer.parseInt(carId));
 
         // step 3: add booking details to the request object
         request.setAttribute("USER_ID", userId);
@@ -96,15 +98,13 @@ public class BookingServlet extends HttpServlet {
         String bookingId = request.getParameter("bookingId");
 
         // step2: load existing booking object
-        Booking updateBooking = null;
-        try {
-            updateBooking = BookingRepository.getBookingById(Integer.parseInt(bookingId));
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
+        BookingEntity updateBooking = null;
+
+        updateBooking = bookingRepository.getBookingById(Integer.parseInt(bookingId));
+
 
         // step 3: load selected car
-        Car car = CarRepository.getCarById(Integer.parseInt(carId));
+        CarEntity car = carRepository.getCarById(Integer.parseInt(carId));
 
         // step 4: update booking details
         updateBooking.setCar(car);
@@ -113,7 +113,7 @@ public class BookingServlet extends HttpServlet {
         updateBooking.setDriver(Boolean.parseBoolean(driver));
 
         // step 5: update db
-        BookingRepository.updateBookingDetails(updateBooking);
+        bookingRepository.updateBookingDetails(updateBooking);
 
         // step 6: send back to the list page
         listUserBooking(request, response);
@@ -126,7 +126,7 @@ public class BookingServlet extends HttpServlet {
         String userId = request.getParameter("userId");
 
         // step2:delete booking model id from data
-        BookingRepository.deleteBookingById(Integer.parseInt(bookingId));
+        bookingRepository.deleteBookingById(Integer.parseInt(bookingId));
 
         // step 3: add booking details to the request object
         request.setAttribute("USER_ID", userId);
@@ -145,16 +145,14 @@ public class BookingServlet extends HttpServlet {
         String bookingId = request.getParameter("bookingId");
 
         // step2: create new Booking object
-        Booking newBooking = new Booking();
+        BookingEntity newBooking = new BookingEntity();
 
         // step 3: load selected car and user
-        Car car = CarRepository.getCarById(Integer.parseInt(carId));
-        try {
-            User user = UserRepository.getUserById(Integer.parseInt(userId));
-            newBooking.setUser(user);
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
+        CarEntity car = carRepository.getCarById(Integer.parseInt(carId));
+
+        UserEntity user = userRepository.getUserById(Integer.parseInt(userId));
+        newBooking.setUser(user);
+
 
         // step 4: add booking details
         newBooking.setCar(car);
@@ -163,7 +161,7 @@ public class BookingServlet extends HttpServlet {
         newBooking.setDriver(Boolean.parseBoolean(driver));
 
         // step3: add booking to db
-        BookingRepository.createBooking(newBooking);
+        bookingRepository.createBooking(newBooking);
 
         // step4: send back to the list page
         listUserBooking(request, response);
@@ -172,33 +170,31 @@ public class BookingServlet extends HttpServlet {
     private void approveBooking(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // step1: read booking info from data
         String bookingId = request.getParameter("bookingId");
-        String cancelComment ="-";
+        String cancelComment = "-";
         String carId = request.getParameter("carId");
         String carAvailable = request.getParameter("carAvailable");
 
         // step2: load existing booking object
-        Booking updateBooking = null;
-        try {
-            updateBooking = BookingRepository.getBookingById(Integer.parseInt(bookingId));
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
+        BookingEntity updateBooking = null;
+
+        updateBooking = bookingRepository.getBookingById(Integer.parseInt(bookingId));
+
 
         // step 4: update booking details
         updateBooking.setBookingStatusCode(4);
         updateBooking.setCancelComment(cancelComment);
 
         // step 5: update db
-        BookingRepository.updateBookingStatusCode(updateBooking);
+        bookingRepository.updateBookingStatusCode(updateBooking);
 
         // step 6: load existing car object
-        Car car = CarRepository.getCarById(Integer.parseInt(carId));
+        CarEntity car = carRepository.getCarById(Integer.parseInt(carId));
 
         // step 7: update booking details
         car.setCarCurrentAvailable(Boolean.parseBoolean(carAvailable));
 
         // step 8: update db
-        CarRepository.updateCarCurrentAvailable(car);
+        carRepository.updateCarCurrentAvailable(car);
 
         // step 9: send back to the list page
         loadAllBooking(request, response);
@@ -211,19 +207,17 @@ public class BookingServlet extends HttpServlet {
         String cancelComment = request.getParameter("cancelComment");
 
         // step2: load existing booking object
-        Booking updateBooking = null;
-        try {
-            updateBooking = BookingRepository.getBookingById(Integer.parseInt(bookingId));
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
+        BookingEntity updateBooking = null;
+
+        updateBooking = bookingRepository.getBookingById(Integer.parseInt(bookingId));
+
 
         // step 4: update booking details
         updateBooking.setBookingStatusCode(3);
         updateBooking.setCancelComment(cancelComment);
 
         // step 5: update db
-        BookingRepository.updateBookingStatusCode(updateBooking);
+        bookingRepository.updateBookingStatusCode(updateBooking);
 
         // step 6: send back to the list page
         loadAllBooking(request, response);
@@ -235,39 +229,26 @@ public class BookingServlet extends HttpServlet {
         String userId = request.getParameter("userId");
 
         // step 1: get booking from helper class from db
-        try {
-            bookingList = BookingRepository.getAllBookingByUserId(Integer.parseInt(userId));
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
+        bookingList = bookingRepository.getAllBookingByUserId(Integer.parseInt(userId));
+
 
         // step 2: add booking to the request object
         request.setAttribute("booking_list", bookingList);
         request.setAttribute("USER_ID", userId);
 
         // step 3: get request dispatcher = send to the jsp
-        RequestDispatcher dispatcher = request.getRequestDispatcher("booking.jsp");
-
-        // step 4: forward call jsp
+        RequestDispatcher dispatcher = request.getRequestDispatcher("my_profile.jsp");
         dispatcher.forward(request, response);
 
     }
 
     public void loadAllBooking(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        try {
-            bookingList = BookingRepository.getAllBooking();
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
+        bookingList = bookingRepository.getAllBooking();
 
-        // step 2: add booking to the request object
-        request.setAttribute("booking_list", bookingList);
+        request.setAttribute("manager_booking_list", bookingList);
 
-        // step 3: get request dispatcher = send to the jsp
         RequestDispatcher dispatcher = request.getRequestDispatcher("manage_booking.jsp");
-
-        // step 4: forward call jsp
         dispatcher.forward(request, response);
 
     }

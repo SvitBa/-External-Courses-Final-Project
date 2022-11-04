@@ -1,11 +1,8 @@
 package com.web;
 
-import com.data.DBException;
-import com.data.entity.Booking;
-import com.data.entity.Car;
-import com.data.repository.BookingRepository;
-import com.data.repository.CarModelRepository;
-import com.data.repository.CarRepository;
+import com.database.entity.BookingEntity;
+import com.database.entity.CarEntity;
+import com.database.repository.*;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -19,9 +16,14 @@ import java.util.List;
 
 @WebServlet("/CarServlet")
 public class CarServlet extends HttpServlet {
-    List<Car> carList = null;
+    List<CarEntity> carList = null;
     List<String> brandList = null;
     List<String> qualityList = null;
+
+    private BookingDAO bookingRepository = new BookingRepository();
+    private CarDAO carRepository = new CarRepository();
+
+    private CarModelDAO carModelRepository = new CarModelRepository();
 
     @Override
     public void init() throws ServletException {
@@ -62,109 +64,73 @@ public class CarServlet extends HttpServlet {
     }
 
     public void returnCar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // step 0: get selected parameter
         String carId = request.getParameter("carId");
         String carAvailable = request.getParameter("carAvailable");
         String bookingId = request.getParameter("bookingId");
-        String cancelComment ="-";
+        String cancelComment = "-";
 
-        // step1: load existing car object
-        Car car = CarRepository.getCarById(Integer.parseInt(carId));
+        CarEntity car = carRepository.getCarById(Integer.parseInt(carId));
 
-        // step 2: update booking details
         car.setCarCurrentAvailable(Boolean.parseBoolean(carAvailable));
 
-        // step 3: update db
-        CarRepository.updateCarCurrentAvailable(car);
+        carRepository.updateCarCurrentAvailable(car);
 
-        // step 4: load existing booking object
-        Booking updateBooking = null;
-        try {
-            updateBooking = BookingRepository.getBookingById(Integer.parseInt(bookingId));
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
-
-        // step 5: update booking details
+        BookingEntity updateBooking = null;
+        updateBooking = bookingRepository.getBookingById(Integer.parseInt(bookingId));
         updateBooking.setBookingStatusCode(6);
         updateBooking.setCancelComment(cancelComment);
 
-        // step 6: update db
-        BookingRepository.updateBookingStatusCode(updateBooking);
-
-        // step 7: get request dispatcher = send to the BookingServlet
+        bookingRepository.updateBookingStatusCode(updateBooking);
         getServletContext().getRequestDispatcher("/BookingServlet").forward(request, response);
 
     }
 
     public void filterCar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // step 0: get selected parameter
         String brand = request.getParameter("brand");
         String qualityClass = request.getParameter("quality");
 
-        // step 1: get car model from helper class from db
-        try {
-
-            if ((brand != null ) & (qualityClass != null)) {
-                carList = CarRepository.getCarByQualityAndBrand(qualityClass, brand);
-            } else if (brand == null || brand.isBlank()) {
-                carList = CarRepository.getCarByQuality(qualityClass);
-            } else if (qualityClass == null || qualityClass.isBlank()) {
-                carList = CarRepository.getCarByBrand(brand);
-            } else {
-                carList = CarRepository.getAllCar();
-            }
-        } catch (DBException e) {
-            throw new RuntimeException(e);
+        if ((brand != null) & (qualityClass != null)) {
+            carList = carRepository.getCarByQualityAndBrand(qualityClass, brand);
+        } else if (brand == null || brand.isBlank()) {
+            carList = carRepository.getCarByQuality(qualityClass);
+        } else if (qualityClass == null || qualityClass.isBlank()) {
+            carList = carRepository.getCarByBrand(brand);
+        } else {
+            carList = carRepository.getAllCar();
         }
 
-        // step 2: add car_model to the request object
         request.setAttribute("car_list", carList);
         request.setAttribute("brand_list", brandList);
         request.setAttribute("quality_list", qualityList);
 
-        // step 3: get request dispatcher = send to the jsp
         RequestDispatcher dispatcher = request.getRequestDispatcher("car_search.jsp");
-
-        // step 4: forward call jsp
         dispatcher.forward(request, response);
     }
 
     private void addCar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // step1: read car model info from data
         String modelId = request.getParameter("carModelId");
         BigDecimal rentPricePerDay = new BigDecimal(request.getParameter("price"));
 
-        // step2: create new car object
-        Car newCar = new Car(rentPricePerDay, modelId);
+        CarEntity newCar = new CarEntity(rentPricePerDay, modelId);
 
-        // step3: add car model to db
-        CarRepository.createCar(newCar);
+        carRepository.createCar(newCar);
 
-        // step4: send back to the list page
         RequestDispatcher dispatcher = request.getRequestDispatcher("CarModelServlet");
         dispatcher.forward(request, response);
     }
 
     public void listCar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // step 1: get car model from helper class from db
-        try {
-            carList = CarRepository.getAllCar();
-            brandList = CarModelRepository.getBrandList();
-            qualityList = CarModelRepository.getQualityList();
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
 
-        // step 2: add car_model to the request object
+        carList = carRepository.getAllCar();
+        brandList = carModelRepository.getBrandList();
+        qualityList = carModelRepository.getQualityList();
+
         request.setAttribute("car_list", carList);
         request.setAttribute("brand_list", brandList);
         request.setAttribute("quality_list", qualityList);
 
-        // step 3: get request dispatcher = send to the jsp
         RequestDispatcher dispatcher = request.getRequestDispatcher("car_search.jsp");
 
-        // step 4: forward call jsp
         dispatcher.forward(request, response);
     }
 }

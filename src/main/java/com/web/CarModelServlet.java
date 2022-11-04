@@ -1,8 +1,8 @@
 package com.web;
 
-import com.data.repository.CarModelRepository;
-import com.data.DBException;
-import com.data.entity.CarModel;
+import com.database.entity.CarModelEntity;
+import com.database.repository.CarModelDAO;
+import com.database.repository.CarModelRepository;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -16,6 +16,7 @@ import java.util.List;
 @WebServlet("/CarModelServlet")
 public class CarModelServlet extends HttpServlet {
 
+    private CarModelDAO carModelRepository = new CarModelRepository();
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -55,7 +56,7 @@ public class CarModelServlet extends HttpServlet {
     private void deleteCarModel(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String carModelId = request.getParameter("carModelId");
 
-        CarModelRepository.deleteCarModelById(Integer.parseInt(carModelId));
+        carModelRepository.deleteCarModelById(Integer.parseInt(carModelId));
 
         listModel(request, response);
     }
@@ -66,9 +67,9 @@ public class CarModelServlet extends HttpServlet {
         String model = request.getParameter("model");
         String qualityClass = request.getParameter("qualityClass");
 
-        CarModel newCarModel = new CarModel(Integer.parseInt(carModelId), brand, model, qualityClass);
+        CarModelEntity newCarModel = new CarModelEntity(Integer.parseInt(carModelId), brand, model, qualityClass);
 
-        CarModelRepository.updateCarModel(newCarModel);
+        carModelRepository.updateCarModel(newCarModel);
 
         listModel(request, response);
 
@@ -77,7 +78,7 @@ public class CarModelServlet extends HttpServlet {
     private void loadCarModel(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String carModelId = request.getParameter("carModelId");
 
-        CarModel carModelById = CarModelRepository.getCarModelId(Integer.parseInt(carModelId));
+        CarModelEntity carModelById = carModelRepository.getCarModelId(Integer.parseInt(carModelId));
 
         request.setAttribute("CAR_MODEL_ID", carModelById);
 
@@ -86,10 +87,10 @@ public class CarModelServlet extends HttpServlet {
 
     }
 
-    private void loadCarModelToAddCar (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void loadCarModelToAddCar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String carModelId = request.getParameter("carModelId");
 
-        CarModel carModelById = CarModelRepository.getCarModelId(Integer.parseInt(carModelId));
+        CarModelEntity carModelById = carModelRepository.getCarModelId(Integer.parseInt(carModelId));
 
         request.setAttribute("CAR_MODEL_ID", carModelById);
 
@@ -103,21 +104,15 @@ public class CarModelServlet extends HttpServlet {
         String model = request.getParameter("model");
         String qualityClass = request.getParameter("qualityClass");
 
-        CarModel newCarModel = new CarModel(brand, model, qualityClass);
+        CarModelEntity newCarModel = new CarModelEntity(brand, model, qualityClass);
 
-        CarModelRepository.createCarModel(newCarModel);
+        carModelRepository.createCarModel(newCarModel);
         listModel(request, response);
 
     }
 
     public void listModel(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<CarModel> carModelList = null;
-        try {
-            carModelList = CarModelRepository.getAllCarModel();
-        } catch (DBException e) {
-            throw new RuntimeException(e);
-        }
-
+        List<CarModelEntity> carModelList = carModelRepository.getAllCarModel();
         request.setAttribute("model_list", carModelList);
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("view_car_model.jsp");

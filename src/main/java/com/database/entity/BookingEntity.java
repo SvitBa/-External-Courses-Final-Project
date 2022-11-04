@@ -1,17 +1,15 @@
-package com.data.entity;
+package com.database.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.time.Duration;
-import java.time.temporal.Temporal;
 import java.util.concurrent.TimeUnit;
 
-public class Booking implements Serializable {
+public class BookingEntity implements Serializable {
 
     private int id;
-    private User user;
-    private Car car;
+    private UserEntity user;
+    private CarEntity car;
     private int bookingStatusCode = 1;
 
     private long numberOfDays;
@@ -22,12 +20,12 @@ public class Booking implements Serializable {
     private boolean driver = false;
     private String cancelComment = "";
 
-    public Booking() {
+    public BookingEntity() {
 
     }
 
 
-    public Booking(User user, Car car, String inputDateOfRent, String inputDateOfReturn) {
+    public BookingEntity(UserEntity user, CarEntity car, String inputDateOfRent, String inputDateOfReturn) {
         this.user = user;
         this.car = car;
         this.pickUpDate = Date.valueOf(inputDateOfRent);
@@ -45,19 +43,19 @@ public class Booking implements Serializable {
     }
 
 
-    public User getUser() {
+    public UserEntity getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserEntity user) {
         this.user = user;
     }
 
-    public Car getCar() {
+    public CarEntity getCar() {
         return car;
     }
 
-    public void setCar(Car car) {
+    public void setCar(CarEntity car) {
         this.car = car;
     }
 
@@ -104,7 +102,7 @@ public class Booking implements Serializable {
         long dateBeforeInMs = pickUpDate.getTime();
         long dateAfterInMs = returnDate.getTime();
         long timeDiff = Math.abs(dateAfterInMs - dateBeforeInMs);
-        numberOfDays = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
+        numberOfDays = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS)+1;
     }
 
     public Date getDateOfReturn() {

@@ -14,7 +14,7 @@
 
 <div id="container" class="col-sm-6">
 
-    <form action="UserServlet" metod="POST">
+    <form action="UserService" method="POST">
         <input type="hidden" name="command" value="UPDATE"/>
         <input type="hidden" name="userId" value="${USER_ID.id}"/>
         <table>

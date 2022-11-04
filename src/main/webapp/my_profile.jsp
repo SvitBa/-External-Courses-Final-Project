@@ -38,8 +38,12 @@
 </table>
 </div>
 
-<div class="row">
+<div id="container" class="col-sm-12">
     <jsp:include page="booking.jsp"/>
+</div>
+<br>
+<div id="container" class="col-sm-12">
+    <jsp:include page="user_invoice_list.jsp"/>
 </div>
 
 </body>

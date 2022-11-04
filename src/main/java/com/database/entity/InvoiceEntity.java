@@ -1,13 +1,13 @@
-package com.data.entity;
+package com.database.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Invoice implements Serializable {
+public class InvoiceEntity implements Serializable {
     private int id;
     private String type;
     private String status;
-    private Booking booking;
+    private BookingEntity booking;
     private BigDecimal totalPrice;
 
     public int getId() {
@@ -34,11 +34,11 @@ public class Invoice implements Serializable {
         this.status = status;
     }
 
-    public Booking getBooking() {
+    public BookingEntity getBooking() {
         return booking;
     }
 
-    public void setBooking(Booking booking) {
+    public void setBooking(BookingEntity booking) {
         this.booking = booking;
     }
 

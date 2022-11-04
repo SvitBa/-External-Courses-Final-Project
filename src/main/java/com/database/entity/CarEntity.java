@@ -1,9 +1,9 @@
-package com.data.entity;
+package com.database.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Car implements Serializable {
+public class CarEntity implements Serializable {
 
     private int id;
 
@@ -11,22 +11,22 @@ public class Car implements Serializable {
 
     private String modelId;
 
-    private CarModel carModel;
+    private CarModelEntity carModel;
 
     private boolean carCurrentAvailable;
 
-    public Car() {
+    public CarEntity() {
 
     }
 
-    public Car(BigDecimal rentPricePerDay, String modelId) {
+    public CarEntity(BigDecimal rentPricePerDay, String modelId) {
         this.id = 1;
         this.rentPricePerDay = rentPricePerDay;
         this.modelId = modelId;
         this.carCurrentAvailable = true;
     }
 
-    public Car(int carId, BigDecimal rentPricePerDay, CarModel model, boolean carCurrentAvailable) {
+    public CarEntity(int carId, BigDecimal rentPricePerDay, CarModelEntity model, boolean carCurrentAvailable) {
         this.id = carId;
         this.rentPricePerDay = rentPricePerDay;
         this.carModel = model;
@@ -57,11 +57,11 @@ public class Car implements Serializable {
         this.modelId = model;
     }
 
-    public CarModel getCarModel() {
+    public CarModelEntity getCarModel() {
         return carModel;
     }
 
-    public void setCarModel(CarModel carModel) {
+    public void setCarModel(CarModelEntity carModel) {
         this.carModel = carModel;
     }
 

@@ -14,8 +14,8 @@
     <span class="navbar-brand mb-0 h1"> Admin menu </span>
     <form class="form-inline">
         <a href="my_profile.jsp"><button class="btn btn-outline-secondary" type="button"> My Profile </button> </a>
-        <a href="UserServlet"><button class="btn btn-outline-secondary" type="button"> Manage users </button> </a>
-        <a href="CarModelServlet"><button class="btn btn-outline-secondary" type="button">Edit car details</button> </a>
+        <a href="/carRentApp/UserService"><button class="btn btn-outline-secondary" type="button"> Manage users </button> </a>
+        <a href="/carRentApp/CarModelServlet"><button class="btn btn-outline-secondary" type="button">Edit car details</button> </a>
     </form>
 </nav>
 

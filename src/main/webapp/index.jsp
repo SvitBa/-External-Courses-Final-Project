@@ -9,19 +9,12 @@
 
 </head>
 <body>
- <c:choose>
-        <c:when test="${user != null}">
-            <p> logged </p>
-        </c:when>
-        <c:otherwise>
-             <p>  not logged </p>
-        </c:otherwise>
-    </c:choose>
+
 <div class="container">
     <div class="row">
         <div class="col-sm-8">
             <br>
-            <h3>Car rental app</h3>
+            <h3> <fmt:message key="label.app"/> Car rental app</h3>
             <img src="car_rent.jpg" alt="Car rent" width="80%" height="auto">
         </div>
         <div class="col-sm-4">
@@ -32,11 +25,9 @@
                         <br>
                         <h3 class="h3 mb-3 font-weight-normal">
                             Login
-                        </h3>
-                        <label>Username : </label>
+                        </h3> <fmt:message key="label.usernameLabel"/>
                         <input type="text" placeholder="Enter Username" name="username" required>
-                        <br>
-                        <label>Password : </label>
+                        <br> <fmt:message key="label.label.passwordLabel"/>
                         <input type="password" placeholder="Enter Password" name="password" required>
                         <br>
                         <button type="submit" class="btn btn-sm btn-secondary">Login</button>
