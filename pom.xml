@@ -72,8 +72,31 @@
         </dependency>
 
 
-
-
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>native2ascii-maven-plugin</artifactId>
+                <version>1.0-alpha-1</version>
+                <configuration>
+                    <dest>target/resources</dest>
+                    <src>src/main/resources</src>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>native2ascii-utf8</id>
+                        <goals>
+                            <goal>native2ascii</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>UTF8</encoding>
+                            <includes>ApplicationResources*.properties, label.properties, label_uk_UA.properties</includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

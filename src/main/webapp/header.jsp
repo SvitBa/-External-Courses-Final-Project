@@ -1,10 +1,24 @@
 <%@ taglib uri= "http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri= "http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<html lang="en">
+
+<c:set var="theLocale"
+value="${not empty param.theLocale ? param.theLocale : pageContext.request.locale}" scope="session" />
+
+<fmt:setLocale value="${theLocale}"/>
+<fmt:setBundle basename="resources.label"/>
+
+<html>
 <head>
     <meta charset="UTF-8">
 </head>
 <body>
+<p class="w3-right">
+        <a href="header.jsp?theLocale=en_GB">EN</a>
+        |
+        <a href="header.jsp?theLocale=ua_UA">UA</a>
+ </p>
+
 <c:choose>
     <c:when test="${user != null}">
         <form action="/carRentApp/logout" method="POST" align="right">
