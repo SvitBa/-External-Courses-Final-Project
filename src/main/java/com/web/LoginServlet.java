@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/LoginServlet")
@@ -39,11 +40,11 @@ public class LoginServlet extends HttpServlet {
             dispatcher.forward(request, response);
         } else {
 
-            List<InvoiceEntity> invoiceList = null;
+            List<InvoiceEntity> invoiceList = new ArrayList<>();
             List<BookingEntity> bookingList = bookingRepository.getAllBookingByUserId(user.getId());
 
             for (BookingEntity booking : bookingList) {
-                List<InvoiceEntity> oneBookingInvoiceList = invoiceRepository.getInvoiceById(booking.getId());
+                List<InvoiceEntity> oneBookingInvoiceList = invoiceRepository.getInvoiceByBookingId(booking.getId());
                 if (oneBookingInvoiceList != null) {
                     invoiceList.addAll(oneBookingInvoiceList);
                 }

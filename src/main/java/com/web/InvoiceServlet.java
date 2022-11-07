@@ -45,9 +45,24 @@ public class InvoiceServlet extends HttpServlet {
             case "LOAD":
                 loadAllInvoice(request, response);
                 break;
+            case "PAY" :
+                payInvoice(request, response);
+                break;
             default:
                 loadAllInvoice(request, response);
         }
+    }
+
+    private void payInvoice (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String invoiceId = request.getParameter("invoiceId");
+
+        InvoiceEntity invoice = invoiceRepository.getInvoiceById(Integer.parseInt(invoiceId));
+        invoice.setStatus("PAID");
+
+        invoiceRepository.updateInvoiceStatus(invoice);
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("my_profile.jsp");
+        dispatcher.forward(request, response);
     }
 
     private void addInvoice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -57,10 +72,7 @@ public class InvoiceServlet extends HttpServlet {
 
         InvoiceEntity newInvoice = new InvoiceEntity();
 
-        BookingEntity booking = null;
-
-        booking = bookingRepository.getBookingById(Integer.parseInt(bookingId));
-
+        BookingEntity booking = bookingRepository.getBookingById(Integer.parseInt(bookingId));
 
         newInvoice.setBooking(booking);
         newInvoice.setType(invoiceType);
@@ -90,7 +102,7 @@ public class InvoiceServlet extends HttpServlet {
 
         userBookingList = bookingRepository.getAllBookingByUserId(Integer.parseInt(userId));
         for (BookingEntity booking : userBookingList) {
-            invoiceList.addAll(invoiceRepository.getInvoiceById(booking.getId()));
+            invoiceList.addAll(invoiceRepository.getInvoiceByBookingId(booking.getId()));
         }
 
         request.setAttribute("USER_ID", userId);

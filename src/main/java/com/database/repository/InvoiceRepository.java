@@ -9,24 +9,20 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InvoiceRepository implements InvoiceDAO{
+public class InvoiceRepository implements InvoiceDAO {
 
     static final Logger logger = Logger.getLogger(InvoiceRepository.class);
-
-    private BookingDAO bookingRepository = new BookingRepository();
     private static final String CREATE_INVOICE = "INSERT INTO invoice (invoice_type, price, booking_id) VALUES (?, ?, ?)";
-
     private static final String FIND_ALL_INVOICE = "SELECT * FROM invoice ";
-
     private static final String FIND_INVOICE_BY_ID = FIND_ALL_INVOICE + " WHERE invoice_id = ?";
-
+    private static final String FIND_INVOICE_BY_BOOKING_ID = FIND_ALL_INVOICE + " WHERE booking_id = ?";
     private static final String UPDATE_INVOICE = "UPDATE invoice SET status = ?, invoice_type =?, price = ? WHERE invoice_id = ?";
-
     private static final String UPDATE_INVOICE_STATUS = "UPDATE invoice SET status = ? WHERE invoice_id = ?";
-
     private static final String DELETE_INVOICE = "DELETE FROM invoice WHERE invoice_id = ?";
+    private BookingDAO bookingRepository = new BookingRepository();
 
-    @Override public void createInvoice(InvoiceEntity newInvoice) {
+    @Override
+    public void createInvoice(InvoiceEntity newInvoice) {
         Connection connection = DataBaseConnection.getInstance().getConnection();
         try (PreparedStatement statement = connection.prepareStatement(CREATE_INVOICE)) {
             statement.setString(1, newInvoice.getType());
@@ -43,7 +39,8 @@ public class InvoiceRepository implements InvoiceDAO{
         }
     }
 
-    @Override public List<InvoiceEntity> getAllInvoice() {
+    @Override
+    public List<InvoiceEntity> getAllInvoice() {
         List<InvoiceEntity> invoiceList = new ArrayList<>();
         Connection connection = DataBaseConnection.getInstance().getConnection();
         try (Statement stmt = connection.createStatement(); ResultSet resultSet = stmt.executeQuery(FIND_ALL_INVOICE)) {
@@ -62,21 +59,42 @@ public class InvoiceRepository implements InvoiceDAO{
         return invoiceList;
     }
 
-
-    @Override public List<InvoiceEntity> getInvoiceById(int id) {
-        List<InvoiceEntity> invoiceList = null;
+    @Override
+    public InvoiceEntity getInvoiceById(int id) {
+        InvoiceEntity invoice = null;
         Connection connection = DataBaseConnection.getInstance().getConnection();
         try (PreparedStatement statement = connection.prepareStatement(FIND_INVOICE_BY_ID)) {
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                invoice = extractInvoiceFromResultSet(resultSet);
+                logger.info("InvoiceRepository find invoice by id");
+            }
+        } catch (SQLException e) {
+            DataBaseConnection.rollback(connection);
+            logger.error("InvoiceRepository got error while getting the invoice by id");
+        } finally {
+            DataBaseConnection.close(connection);
+            logger.info("InvoiceRepository closed connection");
+        }
+        return invoice;
+    }
+
+    @Override
+    public List<InvoiceEntity> getInvoiceByBookingId(int id) {
+        List<InvoiceEntity> invoiceList = new ArrayList<>();
+        Connection connection = DataBaseConnection.getInstance().getConnection();
+        try (PreparedStatement statement = connection.prepareStatement(FIND_INVOICE_BY_BOOKING_ID)) {
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 InvoiceEntity invoice = extractInvoiceFromResultSet(resultSet);
                 invoiceList.add(invoice);
             }
-            logger.info("InvoiceRepository find invoice by id");
+            logger.info("InvoiceRepository find invoices by booking id");
         } catch (SQLException e) {
             DataBaseConnection.rollback(connection);
-            logger.error("InvoiceRepository got error while getting invoice by id");
+            logger.error("InvoiceRepository got error while getting invoices by booking id");
         } finally {
             DataBaseConnection.close(connection);
             logger.info("InvoiceRepository closed connection");
@@ -84,7 +102,8 @@ public class InvoiceRepository implements InvoiceDAO{
         return invoiceList;
     }
 
-    @Override public InvoiceEntity updateInvoice(InvoiceEntity newInvoice) {
+    @Override
+    public InvoiceEntity updateInvoice(InvoiceEntity newInvoice) {
         Connection connection = DataBaseConnection.getInstance().getConnection();
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_INVOICE)) {
             statement.setString(1, newInvoice.getStatus());
@@ -103,7 +122,8 @@ public class InvoiceRepository implements InvoiceDAO{
         return newInvoice;
     }
 
-    @Override public InvoiceEntity updateInvoiceStatus(InvoiceEntity newInvoice) {
+    @Override
+    public InvoiceEntity updateInvoiceStatus(InvoiceEntity newInvoice) {
         Connection connection = DataBaseConnection.getInstance().getConnection();
         try (PreparedStatement statement = connection.prepareStatement(UPDATE_INVOICE_STATUS)) {
             statement.setString(1, newInvoice.getStatus());
@@ -120,7 +140,8 @@ public class InvoiceRepository implements InvoiceDAO{
         return newInvoice;
     }
 
-    @Override public void deleteInvoiceById(int id) {
+    @Override
+    public void deleteInvoiceById(int id) {
         Connection connection = DataBaseConnection.getInstance().getConnection();
         try (PreparedStatement stmt = connection.prepareStatement(DELETE_INVOICE)) {
             stmt.setInt(1, id);

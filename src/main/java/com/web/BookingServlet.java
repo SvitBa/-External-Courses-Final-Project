@@ -175,9 +175,7 @@ public class BookingServlet extends HttpServlet {
         String carAvailable = request.getParameter("carAvailable");
 
         // step2: load existing booking object
-        BookingEntity updateBooking = null;
-
-        updateBooking = bookingRepository.getBookingById(Integer.parseInt(bookingId));
+        BookingEntity updateBooking = bookingRepository.getBookingById(Integer.parseInt(bookingId));
 
 
         // step 4: update booking details

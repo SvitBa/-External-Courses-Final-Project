@@ -22,5 +22,5 @@ public interface CarDAO {
 
     CarEntity updateCarCurrentAvailable(CarEntity car);
 
-    void deleteCarModelById(int id);
+    void deleteCarById(int id);
 }

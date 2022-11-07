@@ -37,6 +37,7 @@
                 <th> Price pre day</th>
                 <th> Driver</th> -->
                 <th> Total price</th>
+                <th> Action</th>
             </tr>
 
             <c:forEach var="tempInvoice" items="${invoice_list}">
@@ -54,6 +55,11 @@
                     <td> ${tempBooking.car.rentPricePerDay}</td>
                     <td> ${tempBooking.driver}</td> -->
                     <td> ${tempInvoice.totalPrice}</td>
+                    <td> <form method="POST" action="/carRentApp/InvoiceServlet">
+                         <input type="hidden" name="command" value="PAY"/>
+                         <input type="hidden" name="invoiceId" value="${tempInvoice.id}"/>
+                         <button type="submit" class="btn btn-dark"> PAY </button>
+                    </form> </td>
 
                 </tr>
             </c:forEach>

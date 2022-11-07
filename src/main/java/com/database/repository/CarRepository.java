@@ -191,7 +191,7 @@ public class CarRepository implements CarDAO {
         return car;
     }
 
-    @Override public void deleteCarModelById(int id) {
+    @Override public void deleteCarById(int id) {
         Connection connection = DataBaseConnection.getInstance().getConnection();
         try (PreparedStatement stmt = connection.prepareStatement(DELETE_CAR)
         ) {
