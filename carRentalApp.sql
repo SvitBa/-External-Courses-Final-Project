@@ -1,11 +1,11 @@
 INSERT INTO car_model (brand, model, quality_class) VALUES
 ('Chevrolet', 'Spark', 'A'), ('Fiat', '500', 'A'), ('Kia', 'Picanto', 'A'), ('Suzuki', 'Alto', 'A'), ('Renault', 'Twingo', 'A'),
-('Ford', 'Fiesta', 'B'), ('Kia', 'Rio'car_model, 'B'), ('Ope', 'Corsa', 'B'), ('Peugeot', '208', 'B'), ('Volkswagen', 'Polo', 'B'),
+('Ford', 'Fiesta', 'B'), ('Kia', 'Rio', 'B'), ('Ope', 'Corsa', 'B'), ('Peugeot', '208', 'B'), ('Volkswagen', 'Polo', 'B'),
 ('Honda', 'Civic', 'C'), ('Hyundai', 'Elantra', 'C'), ('Ford', 'Focus', 'C'), ('Toyota', 'Corolla', 'C'), ('Volkswagen', 'Golf', 'C'),
 ('Acura', 'ILX', 'C'), ('Audi', 'A3', 'C'), ('BMW', '1 Series', 'C'), ('Lexus', 'CT', 'C'), ('Mercedes-Benz', 'A-Class', 'C'),
 ('Ford', 'Mondeo', 'D'), ('Toyota', 'Camry', 'D'), ('Peugeot', '508', 'D'), ('Mazda', '6', 'D'), ('Volkswagen', 'Passat', 'D'),
 ('Alfa Romeo', 'Giulia', 'D'), ('Audi', 'A4', 'D'), ('BMW', '3 Series', 'D'), ('Lexus', 'IS', 'D'), ('Mercedes-Benz', 'C-Class', 'D'),
-('Chevrolet', 'Impala', 'E'), ('Chrysler', '300', 'E'), ('Ford', 'Taurus', 'E'), ('Holden', 'Caprice', 'E'), ('Toyota', 'Avalon', 'E'),
+('Chevrolet', 'Impala', 'E'), ('Chrycar_modelsler', '300', 'E'), ('Ford', 'Taurus', 'E'), ('Holden', 'Caprice', 'E'), ('Toyota', 'Avalon', 'E'),
 ('Audi', 'A6', 'E'), ('BMW', '5 Series', 'E'), ('Cadillac', 'CT5', 'E'), ('Mercedes-Benz', 'E-Class', 'E'), ('Tesla', 'Model S', 'E'),
 ('Audi', 'A8', 'F'), ('BMW', '7 Series', 'F'), ('Jaguar', 'XJ', 'F'), ('Mercedes-Benz', 'S-Class', 'F'), ('Porsche', 'Panamera', 'F'),
 ('Bugatti', 'Chiron', 'S'), ('LaFerrari', ' ', 'S'), ('Lamborghini', 'Aventador', 'S'), ('Pagani', 'Huayra', 'S'), ('Porsche', '918 Spyder', 'S'),

@@ -23,6 +23,7 @@ public class InvoiceServlet extends HttpServlet {
     List<InvoiceEntity> invoiceList = null;
     private BookingDAO bookingRepository = new BookingRepository();
     private InvoiceDAO invoiceRepository = new InvoiceRepository();
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doPost(request, response);
@@ -45,7 +46,7 @@ public class InvoiceServlet extends HttpServlet {
             case "LOAD":
                 loadAllInvoice(request, response);
                 break;
-            case "PAY" :
+            case "PAY":
                 payInvoice(request, response);
                 break;
             default:
@@ -53,7 +54,7 @@ public class InvoiceServlet extends HttpServlet {
         }
     }
 
-    private void payInvoice (HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void payInvoice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String invoiceId = request.getParameter("invoiceId");
 
         InvoiceEntity invoice = invoiceRepository.getInvoiceById(Integer.parseInt(invoiceId));

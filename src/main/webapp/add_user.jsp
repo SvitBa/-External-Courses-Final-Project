@@ -14,7 +14,7 @@
 
 <div id="container" class="col-sm-6">
 
-    <form action="UserServlet" method="POST">
+    <form action="UserService" method="POST">
         <input type="hidden" name="command" value="ADD"/>
         <table>
             <tbody>

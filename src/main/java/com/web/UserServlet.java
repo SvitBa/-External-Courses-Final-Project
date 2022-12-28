@@ -29,7 +29,7 @@ public class UserServlet extends HttpServlet {
         if (theCommand == null) {
             theCommand = "LIST";
         }
-        // route appropriate method
+
         switch (theCommand) {
             case "ADD":
                 try {
@@ -59,7 +59,6 @@ public class UserServlet extends HttpServlet {
     }
 
     private void changeUserProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // step1: read user data from form
         String userId = request.getParameter("userId");
         String login = request.getParameter("login");
         String email = request.getParameter("email");
@@ -138,9 +137,7 @@ public class UserServlet extends HttpServlet {
         UserEntity newUser = UserEntity.createUser(login, email, password, passport);
 
         userRepository.createUser(newUser);
-
         listUser(request, response);
-
     }
 
     public void listUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

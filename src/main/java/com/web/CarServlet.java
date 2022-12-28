@@ -37,14 +37,12 @@ public class CarServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //read command
         String theCommand = request.getParameter("command");
 
         if (theCommand == null) {
             theCommand = "LIST";
         }
 
-        // route appropriate method
         switch (theCommand) {
             case "ADD":
                 addCar(request, response);
@@ -130,7 +128,6 @@ public class CarServlet extends HttpServlet {
         request.setAttribute("quality_list", qualityList);
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("car_search.jsp");
-
         dispatcher.forward(request, response);
     }
 }

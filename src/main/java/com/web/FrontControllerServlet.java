@@ -43,7 +43,6 @@ public class FrontControllerServlet extends HttpServlet {
             return type.asSubclass(FrontCommand.class).getDeclaredConstructor().newInstance();
         } catch (Exception e) {
             return null;
-//            return new CalculatorCommand();
         }
     }
 }

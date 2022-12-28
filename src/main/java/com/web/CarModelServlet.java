@@ -53,6 +53,39 @@ public class CarModelServlet extends HttpServlet {
 
     }
 
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String theCommand = request.getParameter("command");
+
+        if (theCommand == null) {
+            theCommand = "LIST";
+        }
+
+        switch (theCommand) {
+            case "LIST":
+                listModel(request, response);
+                break;
+            case "ADD":
+                addModel(request, response);
+                break;
+            case "ADDCAR":
+                loadCarModelToAddCar(request, response);
+                break;
+            case "LOAD":
+                loadCarModel(request, response);
+                break;
+            case "UPDATE":
+                updateCarModel(request, response);
+                break;
+            case "DELETE":
+                deleteCarModel(request, response);
+                break;
+            default:
+                listModel(request, response);
+        }
+
+    }
+
     private void deleteCarModel(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String carModelId = request.getParameter("carModelId");
 
@@ -70,9 +103,7 @@ public class CarModelServlet extends HttpServlet {
         CarModelEntity newCarModel = new CarModelEntity(Integer.parseInt(carModelId), brand, model, qualityClass);
 
         carModelRepository.updateCarModel(newCarModel);
-
         listModel(request, response);
-
     }
 
     private void loadCarModel(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -84,7 +115,6 @@ public class CarModelServlet extends HttpServlet {
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("update_car_model.jsp");
         dispatcher.forward(request, response);
-
     }
 
     private void loadCarModelToAddCar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -108,7 +138,6 @@ public class CarModelServlet extends HttpServlet {
 
         carModelRepository.createCarModel(newCarModel);
         listModel(request, response);
-
     }
 
     public void listModel(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -117,7 +146,5 @@ public class CarModelServlet extends HttpServlet {
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("view_car_model.jsp");
         dispatcher.forward(request, response);
-
-
     }
 }

@@ -23,7 +23,6 @@ public class LoginServlet extends HttpServlet {
     private UserDAO userRepository = new UserRepository();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // step1: read user data from form
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
@@ -32,7 +31,6 @@ public class LoginServlet extends HttpServlet {
             dispatcher.forward(request, response);
         }
 
-        // step 2: find user in db
         UserEntity user = userRepository.getUserForLogin(username, password);
 
         if (user.getId() == 1) {
@@ -50,13 +48,11 @@ public class LoginServlet extends HttpServlet {
                 }
             }
 
-            // step3: place user, booking_list in request attribute
             request.setAttribute("USER_ID", user.getId());
             request.getSession().setAttribute("user", user);
             request.getSession().setAttribute("booking_list", bookingList);
             request.getSession().setAttribute("invoice_list", invoiceList);
 
-            //step 4: send back to the search page
             RequestDispatcher dispatcher = request.getRequestDispatcher("CarServlet");
             dispatcher.forward(request, response);
         }

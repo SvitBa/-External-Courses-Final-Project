@@ -11,7 +11,6 @@ import java.io.IOException;
 @WebServlet("/logout")
 public class LogoutServlet extends HttpServlet {
 
-
     @Override
     public void doPost (HttpServletRequest request, HttpServletResponse response)throws IOException {
         request.getSession().setAttribute("user", null);
